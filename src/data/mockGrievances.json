@@ -1,0 +1,76 @@
+{
+  "grievances": [
+    {
+      "id": 1,
+      "title": "Broken Street Light on Main Street",
+      "description": "The street light at the intersection of Main Street and Oak Avenue has been non-functional for over two weeks. This creates a safety hazard for pedestrians and drivers, especially during evening hours.\n\nThe light appears to have electrical issues as it flickers intermittently before going completely dark. Local residents have expressed concerns about increased accidents and reduced visibility in the area.",
+      "category": "Infrastructure",
+      "status": "pending",
+      "priority": "high",
+      "submittedBy": "Sarah Johnson",
+      "submittedDate": "2024-01-15",
+      "location": "Main Street & Oak Avenue",
+      "coordinates": { "lat": 40.7128, "lng": -74.0060 },
+      "image": "https://images.pexels.com/photos/2219024/pexels-photo-2219024.jpeg?w=400&h=300&fit=crop",
+      "notes": [
+        {
+          "id": 1,
+          "author": "Admin",
+          "content": "Complaint received and assigned to electrical team.",
+          "timestamp": "2024-01-15T10:30:00Z",
+          "isPublic": true
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Pothole on Highway 101",
+      "description": "Large pothole on Highway 101 near mile marker 45 is causing damage to vehicles and creating dangerous driving conditions. The pothole is approximately 3 feet wide and 8 inches deep.\n\nMultiple vehicles have reported tire damage, and there have been several near-miss accidents as drivers swerve to avoid the pothole. Immediate repair is needed to prevent accidents and further vehicle damage.",
+      "category": "Roads",
+      "status": "in-progress",
+      "priority": "high",
+      "submittedBy": "Mike Davis",
+      "submittedDate": "2024-01-14",
+      "location": "Highway 101, Mile Marker 45",
+      "coordinates": { "lat": 40.7589, "lng": -73.9851 },
+      "image": "https://images.pexels.com/photos/163016/highway-asphalt-space-sky-163016.jpeg?w=400&h=300&fit=crop",
+      "notes": [
+        {
+          "id": 1,
+          "author": "Admin",
+          "content": "Work crew dispatched to assess damage.",
+          "timestamp": "2024-01-14T14:20:00Z",
+          "isPublic": true
+        },
+        {
+          "id": 2,
+          "author": "Admin",
+          "content": "Repair scheduled for next week pending weather conditions.",
+          "timestamp": "2024-01-15T09:15:00Z",
+          "isPublic": true
+        }
+      ]
+    }
+  ],
+  "departments": [
+    "Public Works",
+    "Health Services", 
+    "Transportation",
+    "Education",
+    "Environment",
+    "Water Supply",
+    "Electricity",
+    "Sanitation"
+  ],
+  "categories": [
+    "Infrastructure",
+    "Roads",
+    "Noise",
+    "Utilities",
+    "Environment",
+    "Water Supply",
+    "Electricity",
+    "Sanitation",
+    "Other"
+  ]
+} 

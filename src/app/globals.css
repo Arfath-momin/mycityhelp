@@ -1,8 +1,36 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-primary: #2563EB; /* Primary (blue-600) */
+    --color-primary-50: #EFF6FF; /* Primary Light (blue-50) */
+    --color-primary-100: #DBEAFE; /* Primary Light (blue-100) */
+    --color-primary-200: #BFDBFE; /* Primary Light (blue-200) */
+    --color-primary-300: #93C5FD; /* Primary Light (blue-300) */
+    --color-primary-400: #60A5FA; /* Primary Light (blue-400) */
+    --color-primary-500: #3B82F6; /* Primary Medium (blue-500) */
+    --color-primary-600: #2563EB; /* Primary (blue-600) */
+    --color-primary-700: #1D4ED8; /* Primary Hover (blue-700) */
+    --color-primary-800: #1E40AF; /* Primary Dark (blue-800) */
+    --color-primary-900: #1E3A8A; /* Primary Dark (blue-900) */
+    --color-primary-950: #172554; /* Primary Dark (blue-950) */
+
+    /* Neutral Colors */
+    --color-background: #FFFFFF; /* Background (white) */
+    --color-surface: #F9FAFB; /* Surface (gray-50) */
+    --color-border: #E5E7EB; /* Border (gray-200) */
+    --color-text-primary: #111827; /* Text Primary (gray-900) */
+    --color-text-secondary: #4B5563; /* Text Secondary (gray-600) */
+    --color-text-tertiary: #9CA3AF; /* Text Tertiary (gray-400) */
+
+    /* Semantic Colors */
+    --color-success: #16A34A; /* Success (green-600) */
+    --color-success-light: #DCFCE7; /* Success Light (green-100) */
+    --color-warning: #F59E0B; /* Warning (amber-500) */
+    --color-warning-light: #FEF3C7; /* Warning Light (amber-100) */
+    --color-error: #DC2626; /* Error (red-600) */
+    --color-error-light: #FEE2E2; /* Error Light (red-100) */
+    --color-info: #0EA5E9; /* Info (sky-500) */
+    --color-info-light: #E0F2FE; /* Info Light (sky-100) */
 }
 
 @theme inline {
