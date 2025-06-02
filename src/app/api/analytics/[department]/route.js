@@ -8,15 +8,6 @@ export async function GET(request, context) {
     // Connect to database first
     await connectDB();
 
-    // Get params asynchronously
-    const params = context.params;
-    if (!params) {
-      return NextResponse.json(
-        { error: 'Invalid request parameters' },
-        { status: 400 }
-      );
-    }
-
     // Verify authentication and authorization
     const authResult = await verifyAuth(request);
     if (!authResult.success) {
@@ -34,7 +25,10 @@ export async function GET(request, context) {
       );
     }
 
+    // Get department from params - properly awaited
+    const params = await context.params;
     const { department } = params;
+    
     if (!department) {
       return NextResponse.json(
         { error: 'Department is required' },
@@ -61,7 +55,13 @@ export async function GET(request, context) {
           totalGrievances: analytics.metrics.totalGrievances || 0,
           resolvedGrievances: analytics.metrics.resolvedGrievances || 0,
           pendingGrievances: analytics.metrics.pendingGrievances || 0,
-          inProgressGrievances: analytics.metrics.inProgressGrievances || 0
+          inProgressGrievances: analytics.metrics.inProgressGrievances || 0,
+          percentageChanges: analytics.metrics.percentageChanges || {
+            totalGrievances: 0,
+            resolvedGrievances: 0,
+            pendingGrievances: 0,
+            inProgressGrievances: 0
+          }
         },
         categoryBreakdown: analytics.categoryBreakdown || []
       });

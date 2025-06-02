@@ -117,7 +117,7 @@ const AuthenticationScreen = () => {
         localStorage.setItem("userRole", "user");
         localStorage.setItem("userData", JSON.stringify(user));
         
-        router.push("/user-dashboard");
+        router.push("/dashboard");
       }
     } catch (error) {
       setFormError(error.message || "An error occurred. Please try again later.");
@@ -134,25 +134,27 @@ const AuthenticationScreen = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-[var(--primary)] rounded-full flex items-center justify-center">
             <Icon name="Shield" size={32} color="white" />
           </div>
-          <h1 className="text-3xl font-bold text-text-primary mb-2">Grievance Portal</h1>
-          <p className="text-text-secondary">Secure access to your complaint management system</p>
+          <h1 className="text-3xl font-bold text-[var(--text)] mb-2">Grievance Portal</h1>
+          <p className="text-[var(--text-secondary)]">Secure access to your complaint management system</p>
         </div>
 
         {/* Auth Card */}
-        <div className="card p-8">
+        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-lg shadow-sm p-8">
           {/* Tab Navigation */}
-          <div className="flex mb-6 bg-surface rounded-lg p-1">
+          <div className="flex mb-6 bg-[var(--surface)] rounded-lg p-1">
             <button
               onClick={() => handleTabChange("login")}
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                activeTab === "login" ?"bg-white text-primary shadow-sm" :"text-text-secondary hover:text-text-primary"
+                activeTab === "login" 
+                  ? "bg-[var(--background)] text-[var(--primary)] shadow-sm" 
+                  : "text-[var(--text-secondary)] hover:text-[var(--text)]"
               }`}
             >
               Login
@@ -160,7 +162,9 @@ const AuthenticationScreen = () => {
             <button
               onClick={() => handleTabChange("register")}
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                activeTab === "register" ?"bg-white text-primary shadow-sm" :"text-text-secondary hover:text-text-primary"
+                activeTab === "register" 
+                  ? "bg-[var(--background)] text-[var(--primary)] shadow-sm" 
+                  : "text-[var(--text-secondary)] hover:text-[var(--text)]"
               }`}
             >
               Register
@@ -228,7 +232,7 @@ const AuthenticationScreen = () => {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-8 text-sm text-text-tertiary">
+        <div className="text-center mt-8 text-sm text-[var(--text-secondary)]">
           <p>&copy; {new Date().getFullYear()} Grievance Portal. All rights reserved.</p>
         </div>
       </div>

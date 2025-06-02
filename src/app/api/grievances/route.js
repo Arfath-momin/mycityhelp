@@ -2,39 +2,22 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Grievance from '@/models/Grievance';
 import User from '@/models/User';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-
-// Helper function to verify JWT token
-async function verifyToken(request) {
-  try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return null;
-    }
-
-    const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, JWT_SECRET);
-    return decoded;
-  } catch (error) {
-    console.error('Token verification error:', error);
-    return null;
-  }
-}
+import { verifyAuth } from '@/lib/auth';
 
 export async function GET(request) {
   try {
     await connectDB();
 
-    // Verify authentication
-    const user = await verifyToken(request);
-    if (!user) {
+    // Verify authentication using the shared verifyAuth function
+    const authResult = await verifyAuth(request);
+    if (!authResult.success) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
+
+    const user = authResult.user;
 
     // Get query parameters
     const { searchParams } = new URL(request.url);
@@ -113,8 +96,8 @@ export async function POST(request) {
     await connectDB();
 
     // Verify authentication
-    const user = await verifyToken(request);
-    if (!user) {
+    const authResult = await verifyAuth(request);
+    if (!authResult.success) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -123,12 +106,27 @@ export async function POST(request) {
 
     // Parse the request body
     const body = await request.json();
+    const { title, description, category, location, department, priority, image } = body;
 
-    // Create grievance with user information
+    // Validate required fields
+    if (!title || !description || !category || !location || !department) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    // Create grievance with user information and image URL
     const grievanceData = {
-      ...body,
-      submittedBy: user.id,
-      status: 'pending' // Set initial status
+      title,
+      description,
+      category,
+      location,
+      department,
+      priority: priority || 'medium',
+      submittedBy: authResult.user.id,
+      status: 'pending',
+      image: image || null // Store Cloudinary URL
     };
 
     // Create the grievance
@@ -137,14 +135,14 @@ export async function POST(request) {
     // Fetch the populated grievance
     const populatedGrievance = await Grievance.findById(grievance._id)
       .populate('submittedBy', 'name email')
-      .select('+trackingId'); // Make sure to include the tracking ID
+      .select('+trackingId');
 
     // Return response with tracking ID prominently featured
     return NextResponse.json({
       success: true,
       data: {
         ...populatedGrievance.toObject(),
-        trackingId: populatedGrievance.trackingId // Ensure tracking ID is included
+        trackingId: populatedGrievance.trackingId
       },
       message: `Complaint registered successfully. Your tracking ID is: ${populatedGrievance.trackingId}`
     }, { status: 201 });

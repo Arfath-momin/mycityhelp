@@ -1,5 +1,5 @@
 import React from 'react';
-import Icon from '../../../components/AppIcon';
+import Icon from '@/components/AppIcon';
 
 const ComplaintTable = ({ 
   complaints = [],
@@ -45,11 +45,18 @@ const ComplaintTable = ({
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+    if (!dateString) return 'N/A';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'N/A';
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch (error) {
+      return 'N/A';
+    }
   };
 
   if (isLoading) {
@@ -105,7 +112,7 @@ const ComplaintTable = ({
           <tbody className="bg-white divide-y divide-gray-200">
             {currentComplaints.map((complaint, index) => (
               <tr 
-                key={complaint.id || `complaint-${index}`} 
+                key={complaint._id || `complaint-${index}`} 
                 className="hover:bg-gray-50 cursor-pointer"
                 onClick={() => onComplaintClick(complaint)}
               >
@@ -135,7 +142,7 @@ const ComplaintTable = ({
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500">
-                  {formatDate(complaint.submittedDate)}
+                  {formatDate(complaint.createdAt)}
                 </td>
                 <td className="px-6 py-4">
                   <button

@@ -1,48 +1,48 @@
 import React from 'react';
-import Icon from '../../../components/AppIcon';
+import Icon from '@/components/AppIcon';
 
 const AnalyticsCards = ({ data }) => {
   const formatPercentage = (value) => {
-    const rounded = Math.round(value * 10) / 10;
-    return `${rounded >= 0 ? '+' : ''}${rounded}%`;
+    if (value === undefined || value === null) return '+0%';
+    return `${value >= 0 ? '+' : ''}${value}%`;
   };
 
   const cards = [
     {
       title: 'Total Complaints',
-      value: data.totalComplaints,
+      value: data?.totalGrievances || 0,
       icon: 'FileText',
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
-      change: formatPercentage(data.percentageChanges?.totalGrievances || 0),
-      changeType: (data.percentageChanges?.totalGrievances || 0) >= 0 ? 'increase' : 'decrease'
+      change: formatPercentage(data?.percentageChanges?.totalGrievances),
+      changeType: (data?.percentageChanges?.totalGrievances || 0) >= 0 ? 'increase' : 'decrease'
     },
     {
       title: 'Resolved',
-      value: data.resolvedComplaints,
+      value: data?.resolvedGrievances || 0,
       icon: 'CheckCircle',
       color: 'text-green-600',
       bgColor: 'bg-green-50',
-      change: formatPercentage(data.percentageChanges?.resolvedGrievances || 0),
-      changeType: (data.percentageChanges?.resolvedGrievances || 0) >= 0 ? 'increase' : 'decrease'
+      change: formatPercentage(data?.percentageChanges?.resolvedGrievances),
+      changeType: (data?.percentageChanges?.resolvedGrievances || 0) >= 0 ? 'increase' : 'decrease'
     },
     {
       title: 'In Progress',
-      value: data.inProgressComplaints,
+      value: data?.inProgressGrievances || 0,
       icon: 'Clock',
       color: 'text-yellow-600',
       bgColor: 'bg-yellow-50',
-      change: formatPercentage(data.percentageChanges?.inProgressGrievances || 0),
-      changeType: (data.percentageChanges?.inProgressGrievances || 0) >= 0 ? 'increase' : 'decrease'
+      change: formatPercentage(data?.percentageChanges?.inProgressGrievances),
+      changeType: (data?.percentageChanges?.inProgressGrievances || 0) >= 0 ? 'increase' : 'decrease'
     },
     {
       title: 'Pending',
-      value: data.pendingComplaints,
+      value: data?.pendingGrievances || 0,
       icon: 'AlertCircle',
       color: 'text-red-600',
       bgColor: 'bg-red-50',
-      change: formatPercentage(data.percentageChanges?.pendingGrievances || 0),
-      changeType: (data.percentageChanges?.pendingGrievances || 0) >= 0 ? 'increase' : 'decrease'
+      change: formatPercentage(data?.percentageChanges?.pendingGrievances),
+      changeType: (data?.percentageChanges?.pendingGrievances || 0) >= 0 ? 'increase' : 'decrease'
     }
   ];
 

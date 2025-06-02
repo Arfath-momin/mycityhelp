@@ -1,12 +1,8 @@
 export const DEPARTMENTS = [
   "Public Works",
-  "Health Services", 
-  "Transportation",
-  "Education",
   "Environment",
   "Water Supply",
-  "Electricity",
-  "Sanitation"
+  "Electricity"
 ];
 
 export const CATEGORIES = [

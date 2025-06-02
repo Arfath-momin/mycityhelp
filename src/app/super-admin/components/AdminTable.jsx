@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Icon from '../../../components/AppIcon';
+import Icon from '@/components/AppIcon';
 import ActionButton from './ActionButton';
 
 const AdminTable = ({ admins, loading, onEdit, onDelete }) => {
@@ -26,15 +26,61 @@ const AdminTable = ({ admins, loading, onEdit, onDelete }) => {
 
   if (loading) {
     return (
-      <div className="card">
-        <div className="p-6">
-          <div className="animate-pulse space-y-4">
-            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-            <div className="space-y-3">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-12 bg-gray-200 rounded"></div>
+      <div className="bg-[var(--background)] rounded-xl border border-[var(--border)] overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-[var(--border)]">
+                <th className="px-6 py-4 bg-[var(--surface)]">
+                  <div className="h-4 w-24 bg-[var(--border)] rounded animate-pulse"/>
+                </th>
+                <th className="px-6 py-4 bg-[var(--surface)]">
+                  <div className="h-4 w-32 bg-[var(--border)] rounded animate-pulse"/>
+                </th>
+                <th className="px-6 py-4 bg-[var(--surface)]">
+                  <div className="h-4 w-28 bg-[var(--border)] rounded animate-pulse"/>
+                </th>
+                <th className="px-6 py-4 bg-[var(--surface)]">
+                  <div className="h-4 w-20 bg-[var(--border)] rounded animate-pulse"/>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {[1, 2, 3].map((i) => (
+                <tr key={i} className="border-b border-[var(--border)]">
+                  <td className="px-6 py-4">
+                    <div className="h-4 w-32 bg-[var(--border)] rounded animate-pulse"/>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="h-4 w-40 bg-[var(--border)] rounded animate-pulse"/>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="h-4 w-28 bg-[var(--border)] rounded animate-pulse"/>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="h-8 w-20 bg-[var(--border)] rounded animate-pulse"/>
+                  </td>
+                </tr>
               ))}
-            </div>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  if (!filteredAdmins.length) {
+    return (
+      <div className="bg-[var(--background)] rounded-xl border border-[var(--border)] p-8 text-center">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-[var(--primary-light)] flex items-center justify-center">
+            <Icon name="Users" size={32} className="text-[var(--primary)]" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-[var(--text)]">No Administrators Found</h3>
+            <p className="text-[var(--text-secondary)] mt-1">
+              Add department administrators to get started
+            </p>
           </div>
         </div>
       </div>
@@ -42,117 +88,60 @@ const AdminTable = ({ admins, loading, onEdit, onDelete }) => {
   }
 
   return (
-    <div className="card">
-      {/* Filters */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <Icon name="Search" size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search admins..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="input pl-10"
-              />
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <select
-              value={filterDepartment}
-              onChange={(e) => setFilterDepartment(e.target.value)}
-              className="input"
-            >
-              <option value="">All Departments</option>
-              {departments.map(dept => (
-                <option key={dept} value={dept}>{dept}</option>
-              ))}
-            </select>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="input"
-            >
-              <option value="">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Table */}
+    <div className="bg-[var(--background)] rounded-xl border border-[var(--border)] overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Administrator
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Department
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Last Login
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Created
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-[var(--border)]">
+              <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--text)] bg-[var(--surface)]">Name</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--text)] bg-[var(--surface)]">Email</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--text)] bg-[var(--surface)]">Department</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--text)] bg-[var(--surface)]">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody>
             {filteredAdmins.map((admin) => (
-              <tr key={admin._id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-medium text-primary">
-                        {getInitials(admin.name)}
+              <tr 
+                key={admin._id} 
+                className="border-b border-[var(--border)] hover:bg-[var(--surface)] transition-colors"
+              >
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-[var(--primary-light)] flex items-center justify-center">
+                      <span className="text-sm font-medium text-[var(--primary)]">
+                        {admin.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">{admin.name}</div>
-                      <div className="text-sm text-gray-500">{admin.email}</div>
+                    <div>
+                      <div className="font-medium text-[var(--text)]">{admin.name}</div>
+                      <div className="text-sm text-[var(--text-secondary)]">Administrator</div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{admin.department}</div>
+                <td className="px-6 py-4">
+                  <span className="text-[var(--text-secondary)]">{admin.email}</span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    admin.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {admin.status}
+                <td className="px-6 py-4">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--primary-light)] text-[var(--primary)]">
+                    {admin.department}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {admin.lastLogin ? new Date(admin.lastLogin).toLocaleDateString() : 'Never'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {admin.createdAt ? new Date(admin.createdAt).toLocaleDateString() : '-'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="flex justify-end space-x-2">
-                    <ActionButton
-                      icon="Edit"
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <button
                       onClick={() => onEdit(admin)}
-                      variant="primary"
-                      size="sm"
-                    />
-                    <ActionButton
-                      icon="Trash2"
+                      className="p-2 text-[var(--text-secondary)] hover:text-[var(--primary)] hover:bg-[var(--primary-light)] rounded-lg transition-colors"
+                      title="Edit Administrator"
+                    >
+                      <Icon name="Edit2" size={16} />
+                    </button>
+                    <button
                       onClick={() => onDelete(admin._id)}
-                      variant="danger"
-                      size="sm"
-                    />
+                      className="p-2 text-[var(--text-secondary)] hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                      title="Delete Administrator"
+                    >
+                      <Icon name="Trash2" size={16} />
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -160,14 +149,6 @@ const AdminTable = ({ admins, loading, onEdit, onDelete }) => {
           </tbody>
         </table>
       </div>
-
-      {filteredAdmins.length === 0 && (
-        <div className="p-12 text-center">
-          <Icon name="Users" size={48} className="mx-auto text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No administrators found</h3>
-          <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
-        </div>
-      )}
     </div>
   );
 };

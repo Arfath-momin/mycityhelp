@@ -18,9 +18,9 @@ const InputField = ({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-text-primary">
+      <label className="block text-sm font-medium text-[var(--text)]">
         {label}
-        {required && <span className="text-error ml-1">*</span>}
+        {required && <span className="text-red-500 ml-1">*</span>}
       </label>
       
       <div className="relative">
@@ -29,7 +29,7 @@ const InputField = ({
             <Icon 
               name={icon} 
               size={20} 
-              color={error ? "var(--color-error)" : isFocused ? "var(--color-primary)" : "var(--color-text-tertiary)"} 
+              color={error ? "#EF4444" : isFocused ? "var(--primary)" : "var(--text-secondary)"} 
             />
           </div>
         )}
@@ -41,9 +41,12 @@ const InputField = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
-          className={`input ${icon ? "pl-10" : ""} ${type === "password" ? "pr-10" : ""} ${
-            error ? "input-error" : ""
-          } transition-colors duration-200`}
+          className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg 
+            ${icon ? "pl-10" : ""} ${type === "password" ? "pr-10" : ""}
+            ${error ? "border-red-500 focus:border-red-500" : "focus:border-[var(--primary)]"}
+            text-[var(--text)] placeholder-[var(--text-secondary)]
+            focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)]
+            transition-colors duration-200`}
           aria-invalid={error ? "true" : "false"}
           aria-describedby={error ? `${label}-error` : undefined}
         />
@@ -52,21 +55,21 @@ const InputField = ({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--text-secondary)] hover:text-[var(--text)]"
             tabIndex={-1}
           >
             <Icon 
               name={showPassword ? "EyeOff" : "Eye"} 
               size={20} 
-              color="var(--color-text-tertiary)" 
+              color="currentColor"
             />
           </button>
         )}
       </div>
       
       {error && (
-        <p id={`${label}-error`} className="text-sm text-error flex items-center gap-1">
-          <Icon name="AlertCircle" size={16} />
+        <p id={`${label}-error`} className="text-sm text-red-500 flex items-center gap-1">
+          <Icon name="AlertCircle" size={16} color="#EF4444" />
           {error}
         </p>
       )}

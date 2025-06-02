@@ -1,72 +1,42 @@
 import React from 'react';
-import Icon from '../../../components/AppIcon';
+import Icon from '@/components/AppIcon';
 
-const StatusBadge = ({ status, size = 'default', showIcon = true }) => {
+const StatusBadge = ({ status }) => {
   const getStatusConfig = (status) => {
-    switch (status.toLowerCase()) {
+    switch (status) {
       case 'pending':
         return {
-          color: 'bg-warning-light text-yellow-800 border-yellow-200',
+          label: 'Pending',
           icon: 'Clock',
-          iconColor: '#F59E0B'
+          className: 'bg-yellow-500/10 text-yellow-500'
         };
-      case 'in progress':
+      case 'in_progress':
         return {
-          color: 'bg-info-light text-blue-800 border-blue-200',
-          icon: 'RefreshCw',
-          iconColor: '#0EA5E9'
+          label: 'In Progress',
+          icon: 'Loader',
+          className: 'bg-blue-500/10 text-blue-500'
         };
       case 'resolved':
         return {
-          color: 'bg-success-light text-green-800 border-green-200',
+          label: 'Resolved',
           icon: 'CheckCircle',
-          iconColor: '#16A34A'
-        };
-      case 'rejected':
-        return {
-          color: 'bg-error-light text-red-800 border-red-200',
-          icon: 'XCircle',
-          iconColor: '#DC2626'
-        };
-      case 'on hold':
-        return {
-          color: 'bg-gray-100 text-gray-800 border-gray-200',
-          icon: 'Pause',
-          iconColor: '#6B7280'
+          className: 'bg-green-500/10 text-green-500'
         };
       default:
         return {
-          color: 'bg-gray-100 text-gray-800 border-gray-200',
+          label: 'Unknown',
           icon: 'HelpCircle',
-          iconColor: '#6B7280'
+          className: 'bg-gray-500/10 text-gray-500'
         };
     }
   };
 
   const config = getStatusConfig(status);
-  
-  const sizeClasses = {
-    small: 'px-2 py-1 text-xs',
-    default: 'px-3 py-1 text-sm',
-    large: 'px-4 py-2 text-base'
-  };
-
-  const iconSizes = {
-    small: 12,
-    default: 14,
-    large: 16
-  };
 
   return (
-    <span className={`inline-flex items-center space-x-1 rounded-full border font-medium ${config.color} ${sizeClasses[size]}`}>
-      {showIcon && (
-        <Icon 
-          name={config.icon} 
-          size={iconSizes[size]} 
-          color={config.iconColor}
-        />
-      )}
-      <span className="capitalize">{status}</span>
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${config.className}`}>
+      <Icon name={config.icon} size={12} className={config.icon === 'Loader' ? 'animate-spin' : ''} />
+      {config.label}
     </span>
   );
 };

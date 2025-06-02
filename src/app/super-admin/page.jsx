@@ -231,7 +231,7 @@ const SuperAdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-surface flex">
+    <div className="min-h-screen bg-[var(--surface)] flex">
       <Sidebar 
         userRole="superadmin"
         isCollapsed={isSidebarCollapsed}
@@ -240,65 +240,105 @@ const SuperAdminDashboard = () => {
       
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4">
+        <header className="bg-[var(--background)] border-b border-[var(--border)] px-6 py-4 sticky top-0 z-10 backdrop-blur-sm bg-opacity-80">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Super Admin Dashboard</h1>
-              <p className="text-sm text-gray-600 mt-1">
+              <h1 className="text-2xl font-bold text-[var(--text)] flex items-center gap-2">
+                <Icon name="Shield" className="text-[var(--primary)]" />
+                Super Admin Dashboard
+              </h1>
+              <p className="text-sm text-[var(--text-secondary)] mt-1">
                 Manage administrators and monitor system performance
               </p>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <Icon name="User" size={16} />
-                <span>{userData?.name}</span>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 px-4 py-2 bg-[var(--surface)] rounded-lg border border-[var(--border)]">
+                <div className="w-8 h-8 rounded-full bg-[var(--primary-light)] flex items-center justify-center">
+                  <span className="text-sm font-medium text-[var(--primary)]">
+                    {userData?.name?.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-[var(--text)]">{userData?.name}</p>
+                  <p className="text-xs text-[var(--text-secondary)]">Super Admin</p>
+                </div>
               </div>
               <button
                 onClick={handleLogout}
-                className="btn btn-outline flex items-center space-x-2"
+                className="flex items-center gap-2 px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--surface)] rounded-lg transition-colors"
               >
-                <Icon name="LogOut" size={16} />
+                <Icon name="LogOut" size={18} />
                 <span>Logout</span>
               </button>
             </div>
           </div>
         </header>
 
-        {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-7xl mx-auto space-y-6">
-            {/* Analytics Section */}
-            {analyticsData && (
-              <>
-                <AnalyticsCards data={analyticsData.metrics} />
-                <BarChart data={analyticsData.departmentBreakdown} />
-              </>
-            )}
-
-            {/* Admin Management Section */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Department Administrators
-                </h2>
+        <div className="flex-1 overflow-auto">
+          {error ? (
+            <div className="min-h-[50vh] flex items-center justify-center p-6">
+              <div className="text-center max-w-md mx-auto">
+                <Icon name="AlertTriangle" size={48} className="text-red-500 mx-auto mb-4" />
+                <h2 className="text-xl font-semibold text-[var(--text)] mb-2">Error</h2>
+                <p className="text-[var(--text-secondary)] mb-4">{error}</p>
                 <button
-                  onClick={() => setIsNewAdminModalOpen(true)}
-                  className="btn btn-primary flex items-center space-x-2"
+                  onClick={fetchData}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:bg-[var(--primary-hover)] transition-colors"
                 >
-                  <Icon name="Plus" size={16} />
-                  <span>Add Admin</span>
+                  <Icon name="RefreshCw" size={18} />
+                  Try Again
                 </button>
               </div>
-
-              <AdminTable
-                admins={admins}
-                isLoading={isLoading}
-                onEdit={setSelectedAdmin}
-                onDelete={handleAdminDelete}
-              />
             </div>
-          </div>
-        </main>
+          ) : (
+            <>
+              {/* Analytics Section */}
+              <section id="analytics-section" className="p-6 space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-[var(--text)] flex items-center gap-2">
+                    <Icon name="BarChart2" className="text-[var(--primary)]" />
+                    System Analytics
+                  </h2>
+                  <button
+                    onClick={fetchData}
+                    className="p-2 text-[var(--text-secondary)] hover:text-[var(--primary)] hover:bg-[var(--primary-light)] rounded-lg transition-colors"
+                    title="Refresh Data"
+                  >
+                    <Icon name="RefreshCw" size={18} />
+                  </button>
+                </div>
+                <AnalyticsCards data={analyticsData?.metrics} isLoading={isLoading} />
+                <div className="bg-[var(--background)] rounded-xl border border-[var(--border)] p-6">
+                  <h3 className="text-lg font-semibold text-[var(--text)] mb-4">Department Distribution</h3>
+                  <BarChart data={analyticsData?.departmentBreakdown} />
+                </div>
+              </section>
+
+              {/* Administrators Section */}
+              <section id="administrators-section" className="p-6 space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-[var(--text)] flex items-center gap-2">
+                    <Icon name="Users" className="text-[var(--primary)]" />
+                    Department Administrators
+                  </h2>
+                  <button
+                    onClick={() => setIsNewAdminModalOpen(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:bg-[var(--primary-hover)] transition-colors"
+                  >
+                    <Icon name="UserPlus" size={18} />
+                    Add Administrator
+                  </button>
+                </div>
+                <AdminTable
+                  admins={admins}
+                  onEdit={setSelectedAdmin}
+                  onDelete={handleAdminDelete}
+                  isLoading={isLoading}
+                />
+              </section>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Admin Form Modal */}

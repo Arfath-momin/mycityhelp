@@ -53,7 +53,7 @@ const BarChart = ({ data }) => {
             <Tooltip content={<CustomTooltip />} />
             <Bar
               dataKey="count"
-              fill="var(--color-primary)"
+              fill="#2563eb"
               radius={[4, 4, 0, 0]}
             />
           </RechartsBarChart>

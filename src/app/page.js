@@ -112,34 +112,34 @@ export default function Home() {
 
   const getStatusColor = (status) => {
     const colors = {
-      'pending': 'bg-yellow-100 text-yellow-800',
-      'in-progress': 'bg-blue-100 text-blue-800',
-      'resolved': 'bg-green-100 text-green-800',
-      'rejected': 'bg-red-100 text-red-800'
+      'pending': 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200',
+      'in-progress': 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200',
+      'resolved': 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200',
+      'rejected': 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
     };
-    return colors[status?.toLowerCase()] || 'bg-gray-100 text-gray-800';
+    return colors[status?.toLowerCase()] || 'bg-[var(--surface)] text-[var(--text-secondary)]';
   };
 
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navigation Bar */}
-      <nav className="fixed w-full bg-white/90 backdrop-blur-sm shadow-sm z-50">
+      <nav className="fixed w-full bg-[var(--background)]/95 backdrop-blur-md shadow-lg dark:shadow-black/10 z-50 border-b border-[var(--border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <a href="#home" className="text-2xl font-bold text-blue-600">
+              <a href="#home" className="text-2xl font-bold text-[var(--primary)]">
                 MyCityHelp
               </a>
             </div>
             <div className="hidden md:flex space-x-8 items-center">
-              <a href="#home" className="text-gray-600 hover:text-blue-600 transition-colors">
+              <a href="#home" className="text-[var(--text)] hover:text-[var(--primary)] transition-colors">
                 Home
               </a>
-              <a href="#services" className="text-gray-600 hover:text-blue-600 transition-colors">
+              <a href="#services" className="text-[var(--text)] hover:text-[var(--primary)] transition-colors">
                 Services
               </a>
              
-              <a href="#track" className="text-gray-600 hover:text-blue-600 transition-colors">
+              <a href="#track" className="text-[var(--text)] hover:text-[var(--primary)] transition-colors">
                 Track Status
               </a>
               {isLoggedIn ? (
@@ -151,12 +151,12 @@ export default function Home() {
                         userData.role === 'superadmin' ? '/super-admin' :
                         '/dashboard'
                       }
-                      className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                      className="text-[var(--primary)] hover:text-[var(--primary-hover)] font-medium transition-colors"
                     >
                       Dashboard
                     </Link>
                   )}
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-[var(--text)]">
                     Welcome, {userData?.name}
                   </span>
                   <button 
@@ -169,7 +169,7 @@ export default function Home() {
               ) : (
                 <button 
                   onClick={handleAuth}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
+                  className="bg-[var(--primary)] text-white px-6 py-2 rounded-full hover:bg-[var(--primary-hover)] transition-colors shadow-md hover:shadow-lg"
                 >
                   Sign In
                 </button>
@@ -194,11 +194,11 @@ export default function Home() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 bg-black/60 dark:bg-black/75" />
         </div>
         <div className="relative z-10 text-center text-white px-4">
           <h1 className="text-5xl md:text-7xl font-bold mb-6">
-            Welcome to <span className="text-blue-400">MyCityHelp</span>
+            Welcome to <span className="text-[var(--primary-light)]">MyCityHelp</span>
           </h1>
           <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
             Your voice matters. Report issues, track progress, and help make our city better for everyone.
@@ -206,13 +206,13 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={handleFileComplaint}
-              className="bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
+              className="bg-[var(--primary)] text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-[var(--primary-hover)] transition-colors shadow-lg hover:shadow-xl"
             >
               File a Complaint
             </button>
             <a
               href="#track"
-              className="bg-white text-blue-600 px-8 py-3 rounded-full text-lg font-medium hover:bg-gray-100 transition-colors shadow-lg hover:shadow-xl"
+              className="bg-white/10 backdrop-blur-sm text-white border border-white/20 px-8 py-3 rounded-full text-lg font-medium hover:bg-white/20 transition-colors shadow-lg hover:shadow-xl"
             >
               Track Status
             </a>
@@ -221,12 +221,12 @@ export default function Home() {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-white">
+      <section id="services" className="py-20 bg-[var(--background)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Services</h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto"></div>
-            <p className="mt-4 text-xl text-gray-600">Report and track various civic issues in your neighborhood</p>
+            <h2 className="text-4xl font-bold text-[var(--text)] mb-4">Our Services</h2>
+            <div className="w-20 h-1 bg-[var(--primary)] mx-auto"></div>
+            <p className="mt-4 text-xl text-[var(--text-secondary)]">Report and track various civic issues in your neighborhood</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
@@ -261,14 +261,14 @@ export default function Home() {
                 description: 'Report noise violations and disturbances'
               }
             ].map((service, index) => (
-              <div key={index} className="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
-                <div className="text-blue-600 mb-4">
+              <div key={index} className="bg-[var(--surface)] p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                <div className="text-[var(--primary)] mb-4">
                   <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={service.icon} />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-                <p className="text-gray-600">{service.description}</p>
+                <h3 className="text-xl font-semibold text-[var(--text)] mb-2">{service.title}</h3>
+                <p className="text-[var(--text-secondary)]">{service.description}</p>
               </div>
             ))}
           </div>
@@ -279,14 +279,14 @@ export default function Home() {
       <section id="track" className="py-20 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Track Your Complaint</h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto"></div>
-            <p className="mt-4 text-xl text-gray-600">Track the progress of your complaint</p>
+            <h2 className="text-4xl font-bold text-[var(--text)] mb-4">Track Your Complaint</h2>
+            <div className="w-20 h-1 bg-[var(--primary)] mx-auto"></div>
+            <p className="mt-4 text-xl text-[var(--text-secondary)]">Track the progress of your complaint</p>
           </div>
-          <div className="bg-gray-50 rounded-2xl shadow-xl p-8">
+          <div className="bg-[var(--surface)] rounded-2xl shadow-xl p-8">
             <form onSubmit={checkStatus} className="space-y-6">
               <div>
-                <label htmlFor="complaintId" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="complaintId" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Complaint ID
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
@@ -296,14 +296,14 @@ export default function Home() {
                     value={complaintId}
                     onChange={(e) => setComplaintId(e.target.value.toLowerCase())}
                     placeholder="Enter your complaint ID"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono"
+                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] font-mono"
                   />
                 </div>
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[var(--primary)] text-[var(--background)] px-6 py-3 rounded-lg text-lg font-medium hover:bg-[var(--primary-hover)] transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
@@ -335,12 +335,12 @@ export default function Home() {
             )}
 
             {statusData && (
-              <div className="mt-6 p-6 bg-white border border-gray-200 rounded-lg">
+              <div className="mt-6 p-6 bg-[var(--background)] border border-[var(--border)] rounded-lg">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <p className="flex items-center text-lg">
-                      <span className="font-medium mr-2">Category:</span>
-                      {statusData.category}
+                      <span className="font-medium mr-2 text-[var(--text)]">Category:</span>
+                      <span className="text-[var(--text-secondary)]">{statusData.category}</span>
                     </p>
                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(statusData.status)}`}>
                       {statusData.status}
@@ -354,40 +354,40 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="bg-[var(--surface)] text-[var(--text)] py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="col-span-1">
-              <h2 className="text-2xl font-bold text-blue-400">MyCityHelp</h2>
-              <p className="mt-2 text-gray-400">Your platform for civic engagement and issue resolution.</p>
+              <h2 className="text-2xl font-bold text-[var(--primary)]">MyCityHelp</h2>
+              <p className="mt-2 text-[var(--text-secondary)]">Your platform for civic engagement and issue resolution.</p>
             </div>
             <div>
-              <h3 className="font-medium mb-4">Quick Links</h3>
+              <h3 className="font-medium mb-4 text-[var(--text)]">Quick Links</h3>
               <ul className="space-y-2">
-                <li><a href="#home" className="text-gray-400 hover:text-white transition-colors">Home</a></li>
-                <li><a href="#services" className="text-gray-400 hover:text-white transition-colors">Services</a></li>
-                <li><a href="#complaints" className="text-gray-400 hover:text-white transition-colors">File Complaint</a></li>
-                <li><a href="#track" className="text-gray-400 hover:text-white transition-colors">Track Status</a></li>
+                <li><a href="#home" className="text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors">Home</a></li>
+                <li><a href="#services" className="text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors">Services</a></li>
+                <li><a href="#complaints" className="text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors">File Complaint</a></li>
+                <li><a href="#track" className="text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors">Track Status</a></li>
               </ul>
             </div>
             <div>
-              <h3 className="font-medium mb-4">Contact</h3>
-              <ul className="space-y-2 text-gray-400">
+              <h3 className="font-medium mb-4 text-[var(--text)]">Contact</h3>
+              <ul className="space-y-2 text-[var(--text-secondary)]">
                 <li>support@mycityhelp.com</li>
                 <li>Emergency: 112</li>
                 <li>24/7 Helpline: 1800-123-4567</li>
               </ul>
             </div>
             <div>
-              <h3 className="font-medium mb-4">Download App</h3>
+              <h3 className="font-medium mb-4 text-[var(--text)]">Download App</h3>
               <div className="flex flex-col space-y-2">
-                <a href="#" className="text-gray-400 hover:text-white transition-colors flex items-center">
+                <a href="#" className="text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors flex items-center">
                   <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M17.928 2.072a4.728 4.728 0 00-6.672 0l-1.256 1.256-1.256-1.256a4.728 4.728 0 00-6.672 6.672l1.256 1.256L12 18.672l8.672-8.672 1.256-1.256a4.728 4.728 0 000-6.672z"/>
                   </svg>
                   App Store
                 </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors flex items-center">
+                <a href="#" className="text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors flex items-center">
                   <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M3 3h18v18H3V3zm15.707 4.707l-1.414-1.414L12 11.586 6.707 6.293 5.293 7.707 10.586 13l-5.293 5.293 1.414 1.414L12 14.414l5.293 5.293 1.414-1.414L13.414 13l5.293-5.293z"/>
                   </svg>
@@ -396,7 +396,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
+          <div className="mt-8 pt-8 border-t border-[var(--border)] text-center text-[var(--text-secondary)]">
             <p>&copy; {new Date().getFullYear()} MyCityHelp. All rights reserved.</p>
           </div>
         </div>

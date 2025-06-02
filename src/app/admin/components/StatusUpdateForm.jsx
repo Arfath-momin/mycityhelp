@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Icon from '../../../components/AppIcon';
+import Icon from '@/components/AppIcon';
 
 const StatusUpdateForm = ({ complaint, onStatusUpdate, isLoading }) => {
   const [selectedStatus, setSelectedStatus] = useState(complaint.status);
@@ -18,7 +18,7 @@ const StatusUpdateForm = ({ complaint, onStatusUpdate, isLoading }) => {
       return;
     }
     
-    await onStatusUpdate(complaint.id, selectedStatus, notes.trim());
+    await onStatusUpdate(complaint._id, selectedStatus, notes.trim());
     setNotes('');
   };
 

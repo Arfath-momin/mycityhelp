@@ -31,6 +31,10 @@ const analyticsSchema = new mongoose.Schema({
     averageResolutionTime: {
       type: Number, // in hours
       default: 0
+    },
+    percentageChanges: {
+      type: Map,
+      of: Number
     }
   },
   monthlyMetrics: {
@@ -89,88 +93,81 @@ analyticsSchema.statics.updateDepartmentAnalytics = async function(department) {
     await this.initializeDepartment(department);
     
     const now = new Date();
-    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    
-    // Get previous month
-    const prevDate = new Date(now.getFullYear(), now.getMonth() - 1);
-    const previousMonth = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, '0')}`;
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
-    // Get current month metrics
+    // Get total counts (all time)
+    const [totalCount, pendingCount, inProgressCount, resolvedCount] = await Promise.all([
+      Grievance.countDocuments({ department }),
+      Grievance.countDocuments({ department, status: 'pending' }),
+      Grievance.countDocuments({ department, status: 'in-progress' }),
+      Grievance.countDocuments({ department, status: 'resolved' })
+    ]);
+
+    // Get this month's counts
     const [
-      totalCount,
-      pendingCount,
-      inProgressCount,
-      resolvedCount
+      thisMonthTotal,
+      thisMonthPending,
+      thisMonthInProgress,
+      thisMonthResolved
     ] = await Promise.all([
       Grievance.countDocuments({ 
         department,
-        createdAt: {
-          $gte: new Date(now.getFullYear(), now.getMonth(), 1),
-          $lt: new Date(now.getFullYear(), now.getMonth() + 1, 1)
-        }
+        createdAt: { $gte: startOfMonth }
       }),
       Grievance.countDocuments({ 
-        department, 
+        department,
         status: 'pending',
-        createdAt: {
-          $gte: new Date(now.getFullYear(), now.getMonth(), 1),
-          $lt: new Date(now.getFullYear(), now.getMonth() + 1, 1)
-        }
+        createdAt: { $gte: startOfMonth }
       }),
       Grievance.countDocuments({ 
-        department, 
+        department,
         status: 'in-progress',
-        createdAt: {
-          $gte: new Date(now.getFullYear(), now.getMonth(), 1),
-          $lt: new Date(now.getFullYear(), now.getMonth() + 1, 1)
-        }
+        createdAt: { $gte: startOfMonth }
       }),
       Grievance.countDocuments({ 
-        department, 
+        department,
         status: 'resolved',
-        createdAt: {
-          $gte: new Date(now.getFullYear(), now.getMonth(), 1),
-          $lt: new Date(now.getFullYear(), now.getMonth() + 1, 1)
-        }
+        createdAt: { $gte: startOfMonth }
       })
     ]);
 
-    // Get previous month metrics
+    // Get last month's counts
     const [
-      prevTotalCount,
-      prevPendingCount,
-      prevInProgressCount,
-      prevResolvedCount
+      lastMonthTotal,
+      lastMonthPending,
+      lastMonthInProgress,
+      lastMonthResolved
     ] = await Promise.all([
       Grievance.countDocuments({ 
         department,
-        createdAt: {
-          $gte: new Date(prevDate.getFullYear(), prevDate.getMonth(), 1),
-          $lt: new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1)
+        createdAt: { 
+          $gte: startOfPrevMonth,
+          $lt: startOfMonth
         }
       }),
       Grievance.countDocuments({ 
-        department, 
+        department,
         status: 'pending',
-        createdAt: {
-          $gte: new Date(prevDate.getFullYear(), prevDate.getMonth(), 1),
-          $lt: new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1)
+        createdAt: { 
+          $gte: startOfPrevMonth,
+          $lt: startOfMonth
         }
       }),
       Grievance.countDocuments({ 
-        department, 
+        department,
         status: 'in-progress',
-        createdAt: {
-          $gte: new Date(prevDate.getFullYear(), prevDate.getMonth(), 1),
-          $lt: new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1)
+        createdAt: { 
+          $gte: startOfPrevMonth,
+          $lt: startOfMonth
         }
       }),
       Grievance.countDocuments({ 
-        department, 
+        department,
         status: 'resolved',
-        createdAt: {
-          $gte: new Date(prevDate.getFullYear(), prevDate.getMonth(), 1),
-          $lt: new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1)
+        createdAt: { 
+          $gte: startOfPrevMonth,
+          $lt: startOfMonth
         }
       })
     ]);
@@ -178,14 +175,14 @@ analyticsSchema.statics.updateDepartmentAnalytics = async function(department) {
     // Calculate percentage changes
     const calculatePercentageChange = (current, previous) => {
       if (previous === 0) return current > 0 ? 100 : 0;
-      return ((current - previous) / previous) * 100;
+      return Math.round(((current - previous) / previous) * 100);
     };
 
-    const percentageChanges = {
-      totalGrievances: calculatePercentageChange(totalCount, prevTotalCount),
-      pendingGrievances: calculatePercentageChange(pendingCount, prevPendingCount),
-      inProgressGrievances: calculatePercentageChange(inProgressCount, prevInProgressCount),
-      resolvedGrievances: calculatePercentageChange(resolvedCount, prevResolvedCount)
+    const monthlyChanges = {
+      totalGrievances: calculatePercentageChange(thisMonthTotal, lastMonthTotal),
+      pendingGrievances: calculatePercentageChange(thisMonthPending, lastMonthPending),
+      inProgressGrievances: calculatePercentageChange(thisMonthInProgress, lastMonthInProgress),
+      resolvedGrievances: calculatePercentageChange(thisMonthResolved, lastMonthResolved)
     };
 
     // Get category breakdown
@@ -195,45 +192,26 @@ analyticsSchema.statics.updateDepartmentAnalytics = async function(department) {
       { $project: { category: '$_id', count: 1, _id: 0 } }
     ]);
 
-    // Get priority breakdown
-    const priorityBreakdown = await Grievance.aggregate([
-      { $match: { department } },
-      { $group: { _id: '$priority', count: { $sum: 1 } } },
-      { $project: { priority: '$_id', count: 1, _id: 0 } }
-    ]);
-
-    // Update analytics document with monthly data
-    const monthlyMetrics = new Map();
-    monthlyMetrics.set(currentMonth, {
-      totalGrievances: totalCount,
-      pendingGrievances: pendingCount,
-      inProgressGrievances: inProgressCount,
-      resolvedGrievances: resolvedCount
-    });
-    monthlyMetrics.set(previousMonth, {
-      totalGrievances: prevTotalCount,
-      pendingGrievances: prevPendingCount,
-      inProgressGrievances: prevInProgressCount,
-      resolvedGrievances: prevResolvedCount
-    });
-
-    return await this.findOneAndUpdate(
+    // Update analytics document
+    const analytics = await this.findOneAndUpdate(
       { department },
       {
-        metrics: {
-          totalGrievances: totalCount,
-          pendingGrievances: pendingCount,
-          inProgressGrievances: inProgressCount,
-          resolvedGrievances: resolvedCount,
-          percentageChanges
-        },
-        monthlyMetrics,
-        categoryBreakdown,
-        priorityBreakdown,
-        lastUpdated: new Date()
+        $set: {
+          metrics: {
+            totalGrievances: totalCount,
+            pendingGrievances: pendingCount,
+            inProgressGrievances: inProgressCount,
+            resolvedGrievances: resolvedCount,
+            percentageChanges: monthlyChanges
+          },
+          categoryBreakdown,
+          lastUpdated: new Date()
+        }
       },
-      { upsert: true, new: true }
+      { new: true, upsert: true }
     );
+
+    return analytics;
   } catch (error) {
     console.error(`Failed to update analytics for department ${department}:`, error);
     throw error;

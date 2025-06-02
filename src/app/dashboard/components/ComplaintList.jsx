@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Icon from '@/components/AppIcon';
 import StatusBadge from './StatusBadge';
 
-const ComplaintList = ({ complaints = [], isLoading }) => {
+const ComplaintList = ({ complaints = [], isLoading, onComplaintClick }) => {
   const [expandedComplaint, setExpandedComplaint] = useState(null);
 
   // Ensure complaints is an array
@@ -48,19 +48,11 @@ const ComplaintList = ({ complaints = [], isLoading }) => {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        {[...Array(3)].map((_, index) => (
-          <div key={index} className="border border-gray-200 rounded-lg p-6 animate-pulse">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              </div>
-              <div className="h-6 bg-gray-200 rounded-full w-20"></div>
-            </div>
-            <div className="space-y-2">
-              <div className="h-4 bg-gray-200 rounded w-full"></div>
-              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-            </div>
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-6 animate-pulse">
+            <div className="h-4 bg-[var(--border)] rounded w-1/4 mb-4" />
+            <div className="h-4 bg-[var(--border)] rounded w-3/4 mb-2" />
+            <div className="h-4 bg-[var(--border)] rounded w-1/2" />
           </div>
         ))}
       </div>
@@ -70,170 +62,70 @@ const ComplaintList = ({ complaints = [], isLoading }) => {
   // Empty state
   if (!complaintsList.length) {
     return (
-      <div className="text-center py-12">
-        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Icon name="FileText" size={32} className="text-gray-400" />
+      <div className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-8 text-center">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-[var(--primary-light)] flex items-center justify-center">
+            <Icon name="Inbox" size={32} className="text-[var(--primary)]" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-[var(--text)]">No Grievances Found</h3>
+            <p className="text-[var(--text-secondary)] mt-1">
+              You haven't submitted any grievances yet
+            </p>
+          </div>
         </div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No complaints found</h3>
-        <p className="text-gray-500 mb-6">
-          You haven't submitted any complaints yet, or no complaints match your current filters.
-        </p>
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="btn btn-primary"
-        >
-          Submit Your First Complaint
-        </button>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      {complaintsList.map((complaint) => {
-        if (!complaint) return null;
-        
-        return (
-          <div
-            key={complaint._id || Math.random().toString()}
-            className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
-          >
-            {/* Complaint Header */}
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1 min-w-0">
-                <h4 className="text-lg font-semibold text-gray-900 mb-1 truncate">
-                  {complaint.title || 'Untitled Complaint'}
-                </h4>
-                <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
-                  <div className="flex items-center space-x-1">
-                    <Icon name="Calendar" size={14} />
-                    <span>Submitted: {formatDate(complaint.createdAt)}</span>
-                  </div>
-                  {complaint.location && (
-                    <div className="flex items-center space-x-1">
-                      <Icon name="MapPin" size={14} />
-                      <span>{complaint.location}</span>
-                    </div>
-                  )}
-                  {complaint.category && (
-                    <div className="flex items-center space-x-1">
-                      <Icon name="Tag" size={14} />
-                      <span>{complaint.category}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center space-x-3 ml-4">
+      {complaintsList.map((complaint) => (
+        <button
+          key={complaint._id}
+          onClick={() => onComplaintClick(complaint)}
+          className="w-full bg-[var(--surface)] rounded-xl border border-[var(--border)] p-6 text-left transition-all duration-200 hover:shadow-lg hover:border-[var(--primary-light)] group"
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="text-lg font-semibold text-[var(--text)] truncate group-hover:text-[var(--primary)] transition-colors">
+                  {complaint.title}
+                </h3>
                 <StatusBadge status={complaint.status} />
-                <button
-                  onClick={() => toggleExpanded(complaint._id)}
-                  className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-                  aria-label={expandedComplaint === complaint._id ? 'Collapse details' : 'Expand details'}
-                >
-                  <Icon 
-                    name={expandedComplaint === complaint._id ? 'ChevronUp' : 'ChevronDown'} 
-                    size={20} 
-                  />
-                </button>
               </div>
-            </div>
-
-            {/* Complaint Preview */}
-            <div className="mb-4">
-              <p className="text-gray-700 line-clamp-2">
-                {complaint.description || 'No description provided'}
+              <p className="text-[var(--text-secondary)] mb-4 line-clamp-2">
+                {complaint.description}
               </p>
-            </div>
-
-            {/* Expanded Details */}
-            {expandedComplaint === complaint._id && (
-              <div className="border-t border-gray-200 pt-4 space-y-4">
-                {/* Full Description */}
-                <div>
-                  <h5 className="text-sm font-medium text-gray-900 mb-2">Full Description</h5>
-                  <div className="bg-gray-50 rounded-md p-3">
-                    <p className="text-gray-700 whitespace-pre-line">
-                      {complaint.description || 'No description provided'}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Image */}
-                {complaint.imageUrl && (
-                  <div>
-                    <h5 className="text-sm font-medium text-gray-900 mb-2">Attached Image</h5>
-                    <div className="w-full max-w-md">
-                      <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden relative">
-                        <Image
-                          src={complaint.imageUrl}
-                          alt={`Image for ${complaint.title || 'complaint'}`}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
-                      </div>
-                    </div>
-                  </div>
+              <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)]">
+                <span className="flex items-center gap-1">
+                  <Icon name="Calendar" size={14} />
+                  {new Date(complaint.createdAt).toLocaleDateString()}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Icon name="Tag" size={14} />
+                  {complaint.category}
+                </span>
+                {complaint.department && (
+                  <span className="flex items-center gap-1">
+                    <Icon name="Briefcase" size={14} />
+                    {complaint.department}
+                  </span>
                 )}
-
-                {/* Status Timeline */}
-                <div>
-                  <h5 className="text-sm font-medium text-gray-900 mb-2">Status Timeline</h5>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-3 text-sm">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                      <span className="text-gray-600">
-                        Submitted on {formatDate(complaint.createdAt)}
-                      </span>
-                    </div>
-                    {complaint.updatedAt && complaint.updatedAt !== complaint.createdAt && (
-                      <div className="flex items-center space-x-3 text-sm">
-                        <div className={`w-2 h-2 rounded-full ${
-                          complaint.status === 'resolved' ? 'bg-green-500' : 
-                          complaint.status === 'in progress' ? 'bg-blue-500' : 'bg-yellow-500'
-                        }`}></div>
-                        <span className="text-gray-600">
-                          Last updated on {formatDate(complaint.updatedAt)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Admin Response */}
-                {complaint.adminResponse && (
-                  <div>
-                    <h5 className="text-sm font-medium text-gray-900 mb-2">Admin Response</h5>
-                    <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
-                      <div className="flex items-start space-x-2">
-                        <Icon name="MessageSquare" size={16} className="text-blue-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-blue-800 text-sm">{complaint.adminResponse}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Action Buttons */}
-                <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-                  <div className="text-xs text-gray-500">
-                    Complaint ID: {complaint._id || 'N/A'}
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    {complaint.status === 'resolved' && (
-                      <button className="text-sm text-primary hover:text-primary-700 font-medium">
-                        Rate Resolution
-                      </button>
-                    )}
-                    <button className="text-sm text-gray-600 hover:text-gray-900 font-medium">
-                      Share
-                    </button>
-                  </div>
-                </div>
               </div>
-            )}
+            </div>
+            <div className="flex items-center self-center">
+              <div className="w-8 h-8 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center group-hover:bg-[var(--primary-light)] group-hover:border-[var(--primary-light)] transition-colors">
+                <Icon 
+                  name="ChevronRight" 
+                  size={18} 
+                  className="text-[var(--text-secondary)] group-hover:text-[var(--primary)] transition-colors" 
+                />
+              </div>
+            </div>
           </div>
-        );
-      })}
+        </button>
+      ))}
     </div>
   );
 };

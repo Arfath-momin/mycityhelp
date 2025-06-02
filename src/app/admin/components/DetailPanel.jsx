@@ -147,7 +147,7 @@ const DetailPanel = ({ complaint, onClose, onStatusUpdate, isLoading }) => {
           <div>
             <h5 className="text-sm font-medium text-gray-900 mb-1">Complaint ID</h5>
             <p className="text-sm text-gray-600">
-              #{(complaint._id || complaint.id || '000000').toString().padStart(6, '0')}
+              #{(complaint._id || '000000').toString().padStart(6, '0')}
             </p>
           </div>
         </div>
@@ -165,7 +165,7 @@ const DetailPanel = ({ complaint, onClose, onStatusUpdate, isLoading }) => {
           {Array.isArray(complaint.notes) && complaint.notes.length > 0 ? (
             <div className="space-y-3">
               {complaint.notes.map((note, index) => (
-                <div key={note.id || note._id || index} className="bg-gray-50 rounded-lg p-3">
+                <div key={note._id || index} className="bg-gray-50 rounded-lg p-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-medium text-gray-900">
                       {getAuthorName(note.author)}

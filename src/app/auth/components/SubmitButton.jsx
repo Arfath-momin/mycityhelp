@@ -6,7 +6,10 @@ const SubmitButton = ({ isLoading, text, loadingText }) => {
     <button
       type="submit"
       disabled={isLoading}
-      className="btn btn-primary w-full flex items-center justify-center gap-2 py-3"
+      className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg
+        bg-[var(--primary)] hover:bg-[var(--primary-hover)]
+        text-white font-medium transition-colors duration-200
+        disabled:opacity-50 disabled:cursor-not-allowed`}
     >
       {isLoading ? (
         <>
@@ -15,7 +18,7 @@ const SubmitButton = ({ isLoading, text, loadingText }) => {
         </>
       ) : (
         <>
-          <Icon name="LogIn" size={20} />
+          <Icon name="LogIn" size={20} color="white" />
           {text}
         </>
       )}

@@ -122,20 +122,25 @@ const UserDashboard = () => {
   };
 
   if (!userData) {
-    return null; // or a loading spinner
+    return (
+      <div className="min-h-screen bg-[var(--surface)] flex items-center justify-center">
+        <div className="w-16 h-16 border-4 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Icon name="AlertTriangle" size={48} className="text-error mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-text-primary mb-2">Error</h2>
-          <p className="text-text-secondary mb-4">{error}</p>
+      <div className="min-h-screen bg-[var(--surface)] flex items-center justify-center p-6">
+        <div className="text-center max-w-md mx-auto">
+          <Icon name="AlertTriangle" size={48} className="text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-[var(--text)] mb-2">Error</h2>
+          <p className="text-[var(--text-secondary)] mb-4">{error}</p>
           <button
             onClick={fetchData}
-            className="btn btn-primary"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:bg-[var(--primary-hover)] transition-colors"
           >
+            <Icon name="RefreshCw" size={18} />
             Try Again
           </button>
         </div>
@@ -144,149 +149,227 @@ const UserDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-surface">
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900">User Dashboard</h1>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              {/* User Profile */}
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 rounded-full overflow-hidden relative">
-                  {userData.avatar ? (
-                    <Image
-                      src={userData.avatar}
-                      alt={userData.name}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                      <Icon name="User" size={20} className="text-gray-500" />
-                    </div>
-                  )}
-                </div>
-                <div className="hidden md:block">
-                  <p className="text-sm font-medium text-gray-900">{userData.name}</p>
-                  <p className="text-xs text-gray-500">{userData.email}</p>
-                </div>
-              </div>
-
-              {/* Logout Button */}
-              <button
-                onClick={handleLogout}
-                className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-                title="Logout"
-              >
-                <Icon name="LogOut" size={16} />
-                <span className="hidden sm:inline">Logout</span>
-              </button>
-            </div>
+    <div className="min-h-screen bg-[var(--surface)]">
+      {/* Header */}
+      <header className="bg-[var(--background)] border-b border-[var(--border)] px-6 py-4 sticky top-0 z-10 backdrop-blur-sm bg-opacity-80">
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-[var(--text)] flex items-center gap-2">
+              <Icon name="LayoutDashboard" className="text-[var(--primary)]" />
+              My Dashboard
+            </h1>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
+              Submit and track your grievances
+            </p>
           </div>
-        </header>
-
-        {/* Main Content Area */}
-        <main className="flex-1 p-6 space-y-8">
-          {/* Welcome Section */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-                <Icon name="User" size={24} color="var(--color-primary)" />
+          
+          <div className="flex items-center gap-4">
+            {/* User Profile */}
+            <div className="flex items-center gap-3 px-4 py-2 bg-[var(--surface)] rounded-lg border border-[var(--border)]">
+              <div className="w-8 h-8 rounded-full bg-[var(--primary-light)] flex items-center justify-center">
+                {userData.avatar ? (
+                  <Image
+                    src={userData.avatar}
+                    alt={userData.name}
+                    width={32}
+                    height={32}
+                    className="rounded-full object-cover"
+                  />
+                ) : (
+                  <span className="text-sm font-medium text-[var(--primary)]">
+                    {userData.name?.charAt(0).toUpperCase()}
+                  </span>
+                )}
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">Welcome back, {userData.name}!</h2>
-                <p className="text-gray-600">Submit and track your complaints easily</p>
+                <p className="text-sm font-medium text-[var(--text)]">{userData.name}</p>
+                <p className="text-xs text-[var(--text-secondary)]">{userData.email}</p>
+              </div>
+            </div>
+
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--surface)] rounded-lg transition-colors"
+            >
+              <Icon name="LogOut" size={18} />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-[1400px] mx-auto p-6 space-y-6">
+        {/* Welcome Section */}
+        <section className="bg-[var(--background)] rounded-xl border border-[var(--border)] p-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-[var(--primary-light)] rounded-xl flex items-center justify-center">
+              <Icon name="User" size={24} className="text-[var(--primary)]" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-[var(--text)]">Welcome back, {userData.name}!</h2>
+              <p className="text-[var(--text-secondary)]">Submit and track your grievances easily</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Quick Actions */}
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <button
+            onClick={() => setIsNewComplaintModalOpen(true)}
+            className="bg-[var(--background)] rounded-xl border border-[var(--border)] p-6 hover:border-[var(--primary-light)] transition-all duration-200 hover:shadow-lg group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-[var(--primary-light)] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Icon name="Plus" size={24} className="text-[var(--primary)]" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-lg font-semibold text-[var(--text)]">New Grievance</h3>
+                <p className="text-sm text-[var(--text-secondary)]">Submit a new complaint</p>
+              </div>
+            </div>
+          </button>
+
+          <div className="bg-[var(--background)] rounded-xl border border-[var(--border)] p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center">
+                <Icon name="Clock" size={24} className="text-yellow-500" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-[var(--text)]">Pending</h3>
+                <p className="text-2xl font-bold text-[var(--text)]">
+                  {complaints.filter(c => c.status === 'pending').length}
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Complaint Form */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center space-x-3 mb-6">
-              <Icon name="Plus" size={24} color="var(--color-primary)" />
-              <h3 className="text-lg font-semibold text-gray-900">Submit New Complaint</h3>
-            </div>
-            <ComplaintForm
-              categories={CATEGORIES}
-              onSubmit={handleNewComplaintSubmit}
-              isSubmitting={isLoading}
-            />
-          </div>
-
-          {/* Complaints Section */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-3">
-                <Icon name="FileText" size={24} color="var(--color-primary)" />
-                <h3 className="text-lg font-semibold text-gray-900">My Complaints</h3>
-                <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-sm">
-                  {pagination.total || 0}
-                </span>
+          <div className="bg-[var(--background)] rounded-xl border border-[var(--border)] p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+                <Icon name="Loader" size={24} className="text-blue-500 animate-spin-slow" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-[var(--text)]">In Progress</h3>
+                <p className="text-2xl font-bold text-[var(--text)]">
+                  {complaints.filter(c => c.status === 'in_progress').length}
+                </p>
               </div>
             </div>
+          </div>
 
-            {/* Filter Controls */}
-            <FilterControls
-              filters={filters}
-              onFilterChange={handleFilterChange}
-            />
+          <div className="bg-[var(--background)] rounded-xl border border-[var(--border)] p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+                <Icon name="CheckCircle" size={24} className="text-green-500" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-[var(--text)]">Resolved</h3>
+                <p className="text-2xl font-bold text-[var(--text)]">
+                  {complaints.filter(c => c.status === 'resolved').length}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-            {/* Complaints List */}
-            <ComplaintList
-              complaints={complaints}
-              isLoading={isLoading}
-              onComplaintClick={handleComplaintClick}
-            />
+        {/* Complaints List Section */}
+        <section className="bg-[var(--background)] rounded-xl border border-[var(--border)] p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <Icon name="FileText" size={24} className="text-[var(--primary)]" />
+              <h3 className="text-lg font-semibold text-[var(--text)]">My Grievances</h3>
+              <span className="px-2 py-1 bg-[var(--primary-light)] text-[var(--primary)] text-sm font-medium rounded-full">
+                {pagination.total || 0}
+              </span>
+            </div>
+          </div>
 
-            {/* Pagination */}
-            {pagination.totalPages > 1 && (
-              <div className="mt-6 flex justify-center">
-                <div className="flex items-center space-x-2">
+          <FilterControls
+            filters={filters}
+            onFilterChange={handleFilterChange}
+          />
+
+          <ComplaintList
+            complaints={complaints}
+            isLoading={isLoading}
+            onComplaintClick={handleComplaintClick}
+          />
+
+          {/* Pagination */}
+          {pagination.totalPages > 1 && (
+            <div className="mt-6 flex justify-center gap-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-[var(--text)] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--background)] transition-colors"
+              >
+                <Icon name="ChevronLeft" size={18} />
+                Previous
+              </button>
+              <div className="flex items-center gap-2">
+                {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(page => (
                   <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="btn btn-outline"
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+                      currentPage === page
+                        ? 'bg-[var(--primary)] text-white'
+                        : 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] hover:bg-[var(--background)]'
+                    }`}
                   >
-                    Previous
+                    {page}
                   </button>
-                  <span className="text-sm text-gray-600">
-                    Page {currentPage} of {pagination.totalPages}
-                  </span>
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === pagination.totalPages}
-                    className="btn btn-outline"
-                  >
-                    Next
-                  </button>
-                </div>
+                ))}
               </div>
-            )}
-          </div>
-        </main>
-      </div>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === pagination.totalPages}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-[var(--text)] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--background)] transition-colors"
+              >
+                Next
+                <Icon name="ChevronRight" size={18} />
+              </button>
+            </div>
+          )}
+        </section>
+      </main>
 
       {/* Detail Panel */}
-      {selectedComplaint && (
+      {isDetailPanelOpen && (
         <DetailPanel
           complaint={selectedComplaint}
-          isOpen={isDetailPanelOpen}
           onClose={() => setIsDetailPanelOpen(false)}
         />
       )}
 
       {/* New Complaint Modal */}
-      <NewComplaintForm
-        isOpen={isNewComplaintModalOpen}
-        onClose={() => setIsNewComplaintModalOpen(false)}
-        onSubmit={handleNewComplaintSubmit}
-        isLoading={isLoading}
-      />
+      {isNewComplaintModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+          <div className="bg-[var(--background)] rounded-xl border border-[var(--border)] p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-[var(--text)]">Submit New Grievance</h2>
+              <button
+                onClick={() => setIsNewComplaintModalOpen(false)}
+                className="p-2 hover:bg-[var(--surface)] rounded-lg transition-colors"
+              >
+                <Icon name="X" size={20} className="text-[var(--text-secondary)]" />
+              </button>
+            </div>
+            <NewComplaintForm
+              onSubmit={async (data) => {
+                const result = await handleNewComplaintSubmit(data);
+                if (result.success) {
+                  setIsNewComplaintModalOpen(false);
+                }
+                return result;
+              }}
+              isSubmitting={isLoading}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

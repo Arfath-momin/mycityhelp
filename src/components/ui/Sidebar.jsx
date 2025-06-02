@@ -73,35 +73,29 @@ const Sidebar = ({
       case 'superadmin':
         return [
           { 
+            id: 'dashboard',
             label: 'Dashboard', 
             path: '/super-admin', 
-            icon: 'Settings',
+            icon: 'LayoutDashboard',
             description: 'Super admin dashboard'
           },
           { 
-            label: 'Admin Management', 
-            path: '/super-admin/admins', 
+            id: 'administrators',
+            label: 'Administrators', 
+            path: '/super-admin#administrators', 
             icon: 'Users',
-            description: 'Manage administrators'
+            description: 'Manage administrators',
+            scrollTo: 'administrators-section'
           },
           { 
-            label: 'Global Analytics', 
-            path: '/super-admin/analytics', 
-            icon: 'TrendingUp',
-            description: 'System-wide analytics'
-          },
-          { 
-            label: 'System Settings', 
-            path: '/super-admin/settings', 
-            icon: 'Cog',
-            description: 'System configuration'
-          },
-          { 
-            label: 'Reports', 
-            path: '/super-admin/reports', 
-            icon: 'FileBarChart',
-            description: 'Generate reports'
-          },
+            id: 'analytics',
+            label: 'Analytics', 
+            path: '/super-admin#analytics', 
+            icon: 'BarChart3',
+            description: 'System-wide analytics',
+            scrollTo: 'analytics-section'
+          }
+      
         ];
       default:
         return [];
@@ -121,22 +115,22 @@ const Sidebar = ({
   return (
     <>
       <aside 
-        className={`bg-white border-r border-gray-200 transition-all duration-300 ${
+        className={`bg-[var(--background)] border-r border-[var(--border)] transition-all duration-300 ${
           isCollapsed ? 'w-16' : 'w-64'
         } ${className}`}
         aria-label="Sidebar navigation"
       >
         <div className="flex flex-col h-full">
           {/* Sidebar header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between p-4 border-b border-[var(--border)]">
             {!isCollapsed && (
-              <h2 className="text-lg font-semibold text-gray-900 capitalize">
+              <h2 className="text-lg font-semibold text-[var(--text)] capitalize">
                 {userRole} Panel
               </h2>
             )}
             <button
               onClick={onToggleCollapse}
-              className="p-1 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+              className="p-1 rounded-md text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--surface)]"
               aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               <Icon name={isCollapsed ? 'ChevronRight' : 'ChevronLeft'} size={20} />
@@ -146,18 +140,27 @@ const Sidebar = ({
           {/* Navigation menu */}
           <nav className="flex-1 p-4 space-y-2" aria-label="Sidebar menu">
             {menuItems.map((item) => {
-              const isActive = isActiveRoute(item.path);
+              const isActive = isActiveRoute(item.path.split('#')[0]);
               
               return (
-                <div key={item.path} className="relative">
+                <div key={item.id || item.path} className="relative">
                   <Link
                     href={item.path}
-                    onMouseEnter={() => setHoveredItem(item.path)}
+                    onClick={(e) => {
+                      if (item.scrollTo) {
+                        e.preventDefault();
+                        const element = document.getElementById(item.scrollTo);
+                        if (element) {
+                          element.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }
+                    }}
+                    onMouseEnter={() => setHoveredItem(item.id || item.path)}
                     onMouseLeave={() => setHoveredItem(null)}
                     className={`w-full flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                       isActive
-                        ? 'text-primary bg-primary-50 border-r-2 border-primary' 
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                        ? 'text-[var(--primary)] bg-[var(--primary-light)] border-r-2 border-[var(--primary)]' 
+                        : 'text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--surface)]'
                     }`}
                     aria-current={isActive ? 'page' : undefined}
                     title={isCollapsed ? item.label : undefined}
@@ -165,7 +168,7 @@ const Sidebar = ({
                     <Icon 
                       name={item.icon} 
                       size={20} 
-                      className={`flex-shrink-0 ${isActive ? 'text-primary' : ''}`}
+                      className={`flex-shrink-0 ${isActive ? 'text-[var(--primary)]' : ''}`}
                     />
                     {!isCollapsed && (
                       <span className="truncate">{item.label}</span>
@@ -173,10 +176,13 @@ const Sidebar = ({
                   </Link>
 
                   {/* Tooltip for collapsed state */}
-                  {isCollapsed && hoveredItem === item.path && (
-                    <div className="absolute left-full top-0 ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-md whitespace-nowrap z-50">
-                      {item.label}
-                      <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45" />
+                  {isCollapsed && hoveredItem === (item.id || item.path) && (
+                    <div className="absolute left-full top-0 ml-2 px-3 py-2 bg-[var(--surface)] text-[var(--text)] text-sm rounded-md whitespace-nowrap z-50 border border-[var(--border)] shadow-lg">
+                      <div className="flex items-center space-x-2">
+                        <span>{item.label}</span>
+                      </div>
+                      <p className="text-xs text-[var(--text-secondary)] mt-1">{item.description}</p>
+                      <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-2 h-2 bg-[var(--surface)] border-l border-t border-[var(--border)] rotate-45" />
                     </div>
                   )}
                 </div>
@@ -186,10 +192,10 @@ const Sidebar = ({
 
           {/* Sidebar footer */}
           {!isCollapsed && (
-            <div className="p-4 border-t border-gray-200">
-              <div className="text-xs text-gray-500">
-                <p>ComplaintHub v1.0</p>
-                <p>© 2024 All rights reserved</p>
+            <div className="p-4 border-t border-[var(--border)]">
+              <div className="text-xs text-[var(--text-secondary)]">
+                <p>MyCityHelp v1.0</p>
+                <p>© {new Date().getFullYear()} All rights reserved</p>
               </div>
             </div>
           )}
@@ -198,11 +204,7 @@ const Sidebar = ({
 
       {/* Mobile backdrop */}
       {!isCollapsed && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-25 z-40 lg:hidden"
-          onClick={onToggleCollapse}
-          aria-hidden="true"
-        />
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm md:hidden" onClick={onToggleCollapse} />
       )}
     </>
   );

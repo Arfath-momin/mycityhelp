@@ -1,5 +1,15 @@
 import mongoose from 'mongoose';
 
+// Function to generate a random tracking ID
+function generateTrackingId() {
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let result = '';
+  for (let i = 0; i < 8; i++) {
+    result += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return result;
+}
+
 const noteSchema = new mongoose.Schema({
   author: {
     type: mongoose.Schema.Types.ObjectId,
@@ -23,7 +33,8 @@ const noteSchema = new mongoose.Schema({
 const grievanceSchema = new mongoose.Schema({
   trackingId: {
     type: String,
-    index: false
+    unique: true,
+    sparse: true
   },
   title: {
     type: String,
@@ -88,19 +99,44 @@ const grievanceSchema = new mongoose.Schema({
 });
 
 // Generate tracking ID before saving
-grievanceSchema.pre('save', function(next) {
-  // Only generate tracking ID if it doesn't exist
-  if (!this.trackingId) {
-    // Use the first 6 characters of the _id as the tracking ID
-    this.trackingId = this._id.toString().substring(0, 6);
+grievanceSchema.pre('save', async function(next) {
+  try {
+    // Only generate tracking ID if it doesn't exist
+    if (!this.trackingId) {
+      let isUnique = false;
+      let attempts = 0;
+      const maxAttempts = 10;
+
+      while (!isUnique && attempts < maxAttempts) {
+        const newTrackingId = generateTrackingId();
+        // Check if this tracking ID already exists
+        const existing = await this.constructor.findOne({ trackingId: newTrackingId });
+        if (!existing) {
+          this.trackingId = newTrackingId;
+          isUnique = true;
+        }
+        attempts++;
+      }
+
+      if (!isUnique) {
+        throw new Error('Could not generate unique tracking ID');
+      }
+    }
+    
+    // Set createdAt if it's a new document
+    if (this.isNew && !this.createdAt) {
+      this.createdAt = new Date();
+    }
+    
+    // Update timestamps
+    this.updatedAt = new Date();
+    if (this.status === 'resolved' && !this.resolvedAt) {
+      this.resolvedAt = new Date();
+    }
+    next();
+  } catch (error) {
+    next(error);
   }
-  
-  // Update timestamps
-  this.updatedAt = new Date();
-  if (this.status === 'resolved' && !this.resolvedAt) {
-    this.resolvedAt = new Date();
-  }
-  next();
 });
 
 // Add indexes for better query performance

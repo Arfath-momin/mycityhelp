@@ -122,6 +122,26 @@ export const deleteGrievance = async (id) => {
   return response.json();
 };
 
+export const updateGrievanceStatus = async (grievanceId, status) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/grievances/${grievanceId}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify({ status }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to update grievance status');
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Update grievance status error:', error);
+    throw error;
+  }
+};
+
 // Admin API calls
 export const fetchAdmins = async () => {
   const response = await fetch(`${API_BASE_URL}/admins`, {

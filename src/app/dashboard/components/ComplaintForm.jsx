@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react';
-import Icon from '../../../components/AppIcon';
+import Icon from '@/components/AppIcon';
 import FileUploader from './FileUploader';
 
 const ComplaintForm = ({ categories, onSubmit, isSubmitting }) => {
@@ -126,17 +126,18 @@ const ComplaintForm = ({ categories, onSubmit, isSubmitting }) => {
     switch (category) {
       case 'Infrastructure':
       case 'Roads':
+      case 'Utilities':
+      case 'Sanitation':
         return 'Public Works';
       case 'Water Supply':
-        return 'Water Department';
+        return 'Water Supply';
       case 'Electricity':
-        return 'Electricity Department';
-      case 'Sanitation':
-        return 'Sanitation Department';
+        return 'Electricity';
       case 'Environment':
-        return 'Environmental Department';
+      case 'Noise':
+        return 'Environment';
       default:
-        return 'General Administration';
+        return 'Public Works';
     }
   };
 
