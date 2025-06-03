@@ -253,7 +253,7 @@ const UserDashboard = () => {
               <div>
                 <h3 className="text-lg font-semibold text-[var(--text)]">In Progress</h3>
                 <p className="text-2xl font-bold text-[var(--text)]">
-                  {complaints.filter(c => c.status === 'in_progress').length}
+                  {complaints.filter(c => c.status?.toLowerCase() === 'in-progress' || c.status?.toLowerCase() === 'in progress').length}
                 </p>
               </div>
             </div>
@@ -337,12 +337,11 @@ const UserDashboard = () => {
       </main>
 
       {/* Detail Panel */}
-      {isDetailPanelOpen && (
-        <DetailPanel
-          complaint={selectedComplaint}
-          onClose={() => setIsDetailPanelOpen(false)}
-        />
-      )}
+      <DetailPanel
+        complaint={selectedComplaint}
+        isOpen={isDetailPanelOpen}
+        onClose={() => setIsDetailPanelOpen(false)}
+      />
 
       {/* New Complaint Modal */}
       {isNewComplaintModalOpen && (

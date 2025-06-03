@@ -7,95 +7,159 @@ const DetailPanel = ({ complaint, isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Panel */}
-      <div className="absolute inset-y-0 right-0 w-full max-w-2xl bg-white shadow-xl">
-        <div className="h-full flex flex-col">
-          {/* Header */}
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">Complaint Details</h2>
-              <button
-                onClick={onClose}
-                className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100"
-              >
-                <Icon name="X" size={20} />
-              </button>
-            </div>
+      {/* Modal */}
+      <div className="relative bg-[var(--background)] w-full max-w-4xl rounded-2xl shadow-xl">
+        {/* Header */}
+        <div className="flex items-start justify-between p-6 border-b border-[var(--border)]">
+          <div>
+            <h2 className="text-2xl font-semibold text-[var(--text)]">Complaint Details</h2>
+            <p className="mt-1 text-[var(--text-secondary)]">View detailed information about this complaint</p>
           </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-[var(--surface)] rounded-full transition-colors"
+          >
+            <Icon name="X" size={20} className="text-[var(--text-secondary)]" />
+          </button>
+        </div>
 
-          {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6">
-            <div className="space-y-6">
-              {/* Status and Date */}
-              <div className="flex items-center justify-between">
-                <StatusBadge status={complaint.status} />
-                <span className="text-sm text-gray-500">
-                  Submitted on {format(new Date(complaint.submittedDate), 'MMM d, yyyy')}
-                </span>
+        {/* Content */}
+        <div className="p-6 max-h-[calc(90vh-200px)] overflow-y-auto">
+          <div className="space-y-6">
+            {/* Top Info Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Left Column */}
+              <div className="space-y-4">
+                {/* Tracking ID */}
+                <div className="bg-[var(--surface)] rounded-xl p-4 border border-[var(--border)]">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Icon name="Hash" size={18} className="text-[var(--primary)]" />
+                      <span className="text-sm font-medium text-[var(--text-secondary)]">Tracking ID</span>
+                    </div>
+                    <button 
+                      onClick={() => navigator.clipboard.writeText(complaint._id || complaint.id)}
+                      className="p-1.5 hover:bg-[var(--background)] rounded-lg transition-colors group"
+                      title="Copy Tracking ID"
+                    >
+                      <Icon name="Copy" size={14} className="text-[var(--text-secondary)] group-hover:text-[var(--primary)]" />
+                    </button>
+                  </div>
+                  <p className="mt-1 text-lg font-mono font-medium text-[var(--text)]">{complaint._id || complaint.id}</p>
+                </div>
+
+                {/* Status */}
+                <div className="bg-[var(--surface)] rounded-xl p-4 border border-[var(--border)]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icon name="Activity" size={18} className="text-[var(--primary)]" />
+                    <span className="text-sm font-medium text-[var(--text-secondary)]">Current Status</span>
+                  </div>
+                  <StatusBadge status={complaint.status} />
+                </div>
               </div>
 
-              {/* Title and Description */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{complaint.title}</h3>
-                <p className="text-gray-600 whitespace-pre-line">{complaint.description}</p>
-              </div>
-
-              {/* Category and Location */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Category</label>
-                  <p className="mt-1 text-gray-900">{complaint.category}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Location</label>
-                  <p className="mt-1 text-gray-900">{complaint.location}</p>
-                </div>
-              </div>
-
-              {/* Image */}
-              {complaint.image && (
-                <div>
-                  <label className="text-sm font-medium text-gray-500 block mb-2">
-                    Attached Image
-                  </label>
-                  <img
-                    src={complaint.image}
-                    alt="Complaint"
-                    className="w-full max-w-lg rounded-lg"
-                  />
-                </div>
-              )}
-
-              {/* Updates */}
-              {complaint.notes && complaint.notes.length > 0 && (
-                <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-2">Updates</h4>
-                  <div className="space-y-4">
-                    {complaint.notes.map((note, index) => (
-                      <div
-                        key={note.id || index}
-                        className="bg-gray-50 rounded-lg p-4"
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-gray-900">
-                            {note.author}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {format(new Date(note.timestamp), 'MMM d, yyyy h:mm a')}
-                          </span>
-                        </div>
-                        <p className="text-gray-600">{note.content}</p>
+              {/* Right Column */}
+              <div className="space-y-4">
+                {/* Category & Department */}
+                <div className="bg-[var(--surface)] rounded-xl p-4 border border-[var(--border)]">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Icon name="Tag" size={16} className="text-[var(--primary)]" />
+                        <span className="text-sm font-medium text-[var(--text-secondary)]">Category</span>
                       </div>
-                    ))}
+                      <p className="text-[var(--text)]">{complaint.category}</p>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Icon name="Briefcase" size={16} className="text-[var(--primary)]" />
+                        <span className="text-sm font-medium text-[var(--text-secondary)]">Department</span>
+                      </div>
+                      <p className="text-[var(--text)]">{complaint.department}</p>
+                    </div>
                   </div>
                 </div>
-              )}
+
+                {/* Date Info */}
+                <div className="bg-[var(--surface)] rounded-xl p-4 border border-[var(--border)]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icon name="Calendar" size={18} className="text-[var(--primary)]" />
+                    <span className="text-sm font-medium text-[var(--text-secondary)]">Submission Date</span>
+                  </div>
+                  <p className="text-[var(--text)]">
+                    {format(new Date(complaint.submittedDate || complaint.createdAt), 'PPP')}
+                  </p>
+                </div>
+              </div>
             </div>
+
+            {/* Title and Description */}
+            <div className="bg-[var(--surface)] rounded-xl p-4 border border-[var(--border)]">
+              <div className="flex items-center gap-2 mb-2">
+                <Icon name="FileText" size={18} className="text-[var(--primary)]" />
+                <span className="text-sm font-medium text-[var(--text-secondary)]">Complaint Details</span>
+              </div>
+              <h3 className="text-xl font-semibold text-[var(--text)] mb-3">{complaint.title}</h3>
+              <p className="text-[var(--text)] whitespace-pre-line">{complaint.description}</p>
+            </div>
+
+            {/* Image */}
+            {complaint.image && (
+              <div className="bg-[var(--surface)] rounded-xl p-4 border border-[var(--border)]">
+                <div className="flex items-center gap-2 mb-3">
+                  <Icon name="Image" size={18} className="text-[var(--primary)]" />
+                  <span className="text-sm font-medium text-[var(--text-secondary)]">Attached Image</span>
+                </div>
+                <img
+                  src={complaint.image}
+                  alt="Complaint"
+                  className="w-full rounded-lg object-cover max-h-96"
+                />
+              </div>
+            )}
+
+            {/* Updates */}
+            {complaint.notes && complaint.notes.length > 0 && (
+              <div className="bg-[var(--surface)] rounded-xl p-4 border border-[var(--border)]">
+                <div className="flex items-center gap-2 mb-3">
+                  <Icon name="MessageSquare" size={18} className="text-[var(--primary)]" />
+                  <span className="text-sm font-medium text-[var(--text-secondary)]">Updates</span>
+                </div>
+                <div className="space-y-3">
+                  {complaint.notes.map((note, index) => (
+                    <div
+                      key={note.id || index}
+                      className="bg-[var(--background)] rounded-lg p-3"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-[var(--text)]">
+                          {note.author}
+                        </span>
+                        <span className="text-xs text-[var(--text-secondary)]">
+                          {format(new Date(note.timestamp), 'PPp')}
+                        </span>
+                      </div>
+                      <p className="text-[var(--text)]">{note.content}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="p-6 border-t border-[var(--border)] bg-[var(--surface)]">
+          <button
+            onClick={onClose}
+            className="w-full sm:w-auto px-4 py-2 bg-[var(--background)] text-[var(--text)] rounded-lg border border-[var(--border)] hover:bg-[var(--surface)] transition-colors"
+          >
+            Close Details
+          </button>
         </div>
       </div>
     </div>
