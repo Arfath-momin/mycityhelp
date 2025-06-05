@@ -42,14 +42,14 @@ const DetailPanel = ({ complaint, isOpen, onClose }) => {
                       <span className="text-sm font-medium text-[var(--text-secondary)]">Tracking ID</span>
                     </div>
                     <button 
-                      onClick={() => navigator.clipboard.writeText(complaint._id || complaint.id)}
+                      onClick={() => navigator.clipboard.writeText(complaint.trackingId)}
                       className="p-1.5 hover:bg-[var(--background)] rounded-lg transition-colors group"
                       title="Copy Tracking ID"
                     >
                       <Icon name="Copy" size={14} className="text-[var(--text-secondary)] group-hover:text-[var(--primary)]" />
                     </button>
                   </div>
-                  <p className="mt-1 text-lg font-mono font-medium text-[var(--text)]">{complaint._id || complaint.id}</p>
+                  <p className="mt-1 text-lg font-mono font-medium text-[var(--text)]">{complaint.trackingId}</p>
                 </div>
 
                 {/* Status */}

@@ -77,16 +77,15 @@ export default function Home() {
   const checkStatus = async (e) => {
     e.preventDefault();
     
-    // Validate complaint ID format (either 24 chars for full ID or 6 chars for tracking ID)
-    const fullIdRegex = /^[0-9a-fA-F]{24}$/;
-    const trackingIdRegex = /^[0-9a-fA-F]{6}$/;
+    // Validate tracking ID format (8 characters)
+    const trackingIdRegex = /^[A-Z0-9]{8}$/;
     
     if (!complaintId.trim()) {
-      setError("Please enter your complaint ID");
+      setError("Please enter your tracking ID");
       return;
     }
-    if (!fullIdRegex.test(complaintId.trim()) && !trackingIdRegex.test(complaintId.trim())) {
-      setError("Please enter a valid complaint ID (24 characters) or tracking ID (6 characters)");
+    if (!trackingIdRegex.test(complaintId.trim())) {
+      setError("Please enter a valid tracking ID (8 characters)");
       return;
     }
 
@@ -95,7 +94,7 @@ export default function Home() {
     setStatusData(null);
 
     try {
-      const response = await fetch(`/api/grievances/status?id=${encodeURIComponent(complaintId.trim())}`);
+      const response = await fetch(`/api/grievances/status?trackingId=${encodeURIComponent(complaintId.trim())}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -290,14 +289,15 @@ export default function Home() {
                   Complaint ID
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    type="text"
-                    id="complaintId"
-                    value={complaintId}
-                    onChange={(e) => setComplaintId(e.target.value.toLowerCase())}
-                    placeholder="Enter your complaint ID"
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] font-mono"
-                  />
+                                <input
+                type="text"
+                id="complaintId"
+                value={complaintId}
+                onChange={(e) => setComplaintId(e.target.value.toUpperCase())}
+                placeholder="Enter your tracking ID"
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] font-mono uppercase"
+                maxLength={8}
+              />
                 </div>
               </div>
               <button
@@ -340,10 +340,10 @@ export default function Home() {
                   <div className="flex justify-between items-center">
                     <p className="flex items-center text-lg">
                       <span className="font-medium mr-2 text-[var(--text)]">Category:</span>
-                      <span className="text-[var(--text-secondary)]">{statusData.category}</span>
+                      <span className="text-[var(--text-secondary)]">{statusData.data.category}</span>
                     </p>
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(statusData.status)}`}>
-                      {statusData.status}
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(statusData.data.status)}`}>
+                      {statusData.data.status}
                     </span>
                   </div>
                 </div>

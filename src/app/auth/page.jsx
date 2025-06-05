@@ -18,9 +18,13 @@ const AuthenticationScreen = () => {
     name: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
+    otp: ""
   });
   const [fieldErrors, setFieldErrors] = useState({});
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,28 +70,93 @@ const AuthenticationScreen = () => {
     if (formError) setFormError("");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-    
+  const handleSendOTP = async () => {
+    if (!formData.email || !validateEmail(formData.email)) {
+      setFieldErrors(prev => ({ ...prev, email: "Please enter a valid email address" }));
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email })
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        setOtpSent(true);
+        setFieldErrors({});
+      } else {
+        setFieldErrors(prev => ({ ...prev, email: data.error }));
+      }
+    } catch (error) {
+      setFieldErrors(prev => ({ ...prev, email: "Failed to send OTP" }));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyOTP = async () => {
+    if (!formData.otp) {
+      setFieldErrors(prev => ({ ...prev, otp: "Please enter the OTP" }));
+      return;
+    }
+
+    setIsVerifying(true);
+    try {
+      const response = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email: formData.email,
+          otp: formData.otp
+        })
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        setOtpVerified(true);
+        setFieldErrors({});
+      } else {
+        setFieldErrors(prev => ({ ...prev, otp: data.error }));
+      }
+    } catch (error) {
+      setFieldErrors(prev => ({ ...prev, otp: "Failed to verify OTP" }));
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleFormSubmit = async (formData) => {
     setIsLoading(true);
     setFormError("");
     
     try {
       if (activeTab === "login") {
-        const { token, user } = await loginUser({
-          email: formData.email,
-          password: formData.password
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password
+          })
         });
 
-        // Store token and user info
-        localStorage.setItem("token", token);
-        localStorage.setItem("userRole", user.role);
-        localStorage.setItem("userData", JSON.stringify(user));
+        const data = await response.json();
         
-        // Redirect based on role
-        switch (user.role) {
+        if (!response.ok) {
+          throw new Error(data.error || 'Login failed');
+        }
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userRole", data.user.role);
+        localStorage.setItem("userData", JSON.stringify(data.user));
+        
+        switch (data.user.role) {
           case "user":
             router.push("/dashboard");
             break;
@@ -101,21 +170,41 @@ const AuthenticationScreen = () => {
             router.push("/dashboard");
         }
       } else {
-        const user = await registerUser({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password
+          })
         });
 
-        // After registration, automatically log in
-        const { token } = await loginUser({
-          email: formData.email,
-          password: formData.password
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Registration failed');
+        }
+
+        // After successful registration, log in automatically
+        const loginResponse = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password
+          })
         });
 
-        localStorage.setItem("token", token);
+        const loginData = await loginResponse.json();
+        
+        if (!loginResponse.ok) {
+          throw new Error(loginData.error || 'Auto-login failed');
+        }
+
+        localStorage.setItem("token", loginData.token);
         localStorage.setItem("userRole", "user");
-        localStorage.setItem("userData", JSON.stringify(user));
+        localStorage.setItem("userData", JSON.stringify(loginData.user));
         
         router.push("/dashboard");
       }
@@ -128,7 +217,7 @@ const AuthenticationScreen = () => {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+    setFormData({ name: "", email: "", password: "", confirmPassword: "", otp: "" });
     setFieldErrors({});
     setFormError("");
   };
@@ -172,63 +261,11 @@ const AuthenticationScreen = () => {
           </div>
 
           {/* Form */}
-          <AuthForm onSubmit={handleSubmit}>
-            {activeTab === "register" && (
-              <InputField
-                label="Full Name"
-                type="text"
-                value={formData.name}
-                onChange={(value) => handleInputChange("name", value)}
-                error={fieldErrors.name}
-                placeholder="Enter your full name"
-                icon="User"
-                required
-              />
-            )}
-
-            <InputField
-              label="Email Address"
-              type="email"
-              value={formData.email}
-              onChange={(value) => handleInputChange("email", value)}
-              error={fieldErrors.email}
-              placeholder="Enter your email address"
-              icon="Mail"
-              required
-            />
-
-            <InputField
-              label="Password"
-              type="password"
-              value={formData.password}
-              onChange={(value) => handleInputChange("password", value)}
-              error={fieldErrors.password}
-              placeholder="Enter your password"
-              icon="Lock"
-              required
-            />
-
-            {activeTab === "register" && (
-              <InputField
-                label="Confirm Password"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={(value) => handleInputChange("confirmPassword", value)}
-                error={fieldErrors.confirmPassword}
-                placeholder="Confirm your password"
-                icon="Lock"
-                required
-              />
-            )}
-
-            {formError && <ErrorMessage message={formError} />}
-
-            <SubmitButton
-              isLoading={isLoading}
-              text={activeTab === "login" ? "Sign In" : "Create Account"}
-              loadingText={activeTab === "login" ? "Signing In..." : "Creating Account..."}
-            />
-          </AuthForm>
+          <AuthForm
+            onSubmit={handleFormSubmit}
+            isLoading={isLoading}
+            activeTab={activeTab}
+          />
         </div>
 
         {/* Footer */}

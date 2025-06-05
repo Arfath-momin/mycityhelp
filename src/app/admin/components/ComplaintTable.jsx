@@ -112,7 +112,7 @@ const ComplaintTable = ({
           <tbody className="bg-white divide-y divide-gray-200">
             {currentComplaints.map((complaint, index) => (
               <tr 
-                key={complaint._id || `complaint-${index}`} 
+                key={complaint.trackingId || complaint._id || `complaint-${index}`} 
                 className="hover:bg-gray-50 cursor-pointer"
                 onClick={() => onComplaintClick(complaint)}
               >
@@ -122,7 +122,7 @@ const ComplaintTable = ({
                       {complaint.title}
                     </div>
                     <div className="text-sm text-gray-500">
-                      by {typeof complaint.submittedBy === 'object' ? complaint.submittedBy.name : complaint.submittedBy}
+                      ID: {complaint.trackingId} | by {typeof complaint.submittedBy === 'object' ? complaint.submittedBy.name : complaint.submittedBy}
                     </div>
                   </div>
                 </td>

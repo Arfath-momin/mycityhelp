@@ -82,7 +82,7 @@ const ComplaintList = ({ complaints = [], isLoading, onComplaintClick }) => {
     <div className="space-y-4">
       {complaintsList.map((complaint) => (
         <button
-          key={complaint._id}
+          key={complaint.trackingId || complaint._id}
           onClick={() => onComplaintClick(complaint)}
           className="w-full bg-[var(--surface)] rounded-xl border border-[var(--border)] p-6 text-left transition-all duration-200 hover:shadow-lg hover:border-[var(--primary-light)] group"
         >
@@ -98,6 +98,10 @@ const ComplaintList = ({ complaints = [], isLoading, onComplaintClick }) => {
                 {complaint.description}
               </p>
               <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)]">
+                <span className="flex items-center gap-1">
+                  <Icon name="Hash" size={14} />
+                  {complaint.trackingId}
+                </span>
                 <span className="flex items-center gap-1">
                   <Icon name="Calendar" size={14} />
                   {new Date(complaint.createdAt).toLocaleDateString()}

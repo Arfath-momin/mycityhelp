@@ -147,7 +147,7 @@ const DetailPanel = ({ complaint, onClose, onStatusUpdate, isLoading }) => {
           <div>
             <h5 className="text-sm font-medium text-gray-900 mb-1">Complaint ID</h5>
             <p className="text-sm text-gray-600">
-              #{(complaint._id || '000000').toString().padStart(6, '0')}
+              {complaint.trackingId}
             </p>
           </div>
         </div>

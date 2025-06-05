@@ -3,6 +3,7 @@ import connectDB from '@/lib/mongodb';
 import Grievance from '@/models/Grievance';
 import User from '@/models/User';
 import { verifyAuth } from '@/lib/auth';
+import { sendComplaintNotification } from '@/utils/emailService';
 
 export async function GET(request) {
   try {
@@ -126,7 +127,7 @@ export async function POST(request) {
       priority: priority || 'medium',
       submittedBy: authResult.user.id,
       status: 'pending',
-      image: image || null // Store Cloudinary URL
+      image: image || null
     };
 
     // Create the grievance
@@ -136,6 +137,29 @@ export async function POST(request) {
     const populatedGrievance = await Grievance.findById(grievance._id)
       .populate('submittedBy', 'name email')
       .select('+trackingId');
+
+    // Find all active admins of the department
+    const departmentAdmins = await User.find({
+      role: 'admin',
+      department: department,
+      status: 'active'
+    }).select('email');
+
+    // Send email notifications to all department admins
+    if (departmentAdmins.length > 0) {
+      const emailPromises = departmentAdmins.map(admin => 
+        sendComplaintNotification(admin.email, populatedGrievance.toObject())
+      );
+
+      // Wait for all emails to be sent but don't block the response
+      Promise.all(emailPromises)
+        .then(results => {
+          console.log('Email notifications sent:', results);
+        })
+        .catch(error => {
+          console.error('Error sending email notifications:', error);
+        });
+    }
 
     // Return response with tracking ID prominently featured
     return NextResponse.json({
