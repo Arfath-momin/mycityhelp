@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { generateOTP, sendOTP } from '@/utils/otpService';
-
-// Store OTPs in memory with expiration (in production, use Redis or similar)
-const otpStore = new Map();
+import otpStore from '@/utils/otpStore';
 
 export async function POST(request) {
   try {
@@ -29,6 +27,8 @@ export async function POST(request) {
     const result = await sendOTP(email, otp);
     
     if (!result.success) {
+      // If email fails, remove OTP from store
+      otpStore.delete(email);
       return NextResponse.json(
         { error: 'Failed to send OTP' },
         { status: 500 }
