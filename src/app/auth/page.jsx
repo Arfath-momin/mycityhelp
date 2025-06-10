@@ -230,7 +230,7 @@ const AuthenticationScreen = () => {
           <div className="w-16 h-16 mx-auto mb-4 bg-[var(--primary)] rounded-full flex items-center justify-center">
             <Icon name="Shield" size={32} color="white" />
           </div>
-          <h1 className="text-3xl font-bold text-[var(--text)] mb-2">Grievance Portal</h1>
+          <h1 className="text-3xl font-bold text-[var(--text)] mb-2">MyCityHelp</h1>
           <p className="text-[var(--text-secondary)]">Secure access to your complaint management system</p>
         </div>
 
@@ -270,7 +270,7 @@ const AuthenticationScreen = () => {
 
         {/* Footer */}
         <div className="text-center mt-8 text-sm text-[var(--text-secondary)]">
-          <p>&copy; {new Date().getFullYear()} Grievance Portal. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} MyCityHelp. All rights reserved.</p>
         </div>
       </div>
 
