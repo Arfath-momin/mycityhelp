@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Icon from "@/components/AppIcon";
 
-const AuthForm = ({ onSubmit, isLoading, activeTab }) => {
+const AuthForm = ({ onSubmit, isLoading, activeTab, formError }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -120,6 +120,16 @@ const AuthForm = ({ onSubmit, isLoading, activeTab }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Display general form errors */}
+      {formError && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+          <div className="flex items-center gap-2">
+            <Icon name="AlertCircle" size={18} className="text-red-500" />
+            <p className="text-red-700 text-sm font-medium">{formError}</p>
+          </div>
+        </div>
+      )}
+
       {activeTab === "register" && (
         <div>
           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">

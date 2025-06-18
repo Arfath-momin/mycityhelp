@@ -265,6 +265,7 @@ const AuthenticationScreen = () => {
             onSubmit={handleFormSubmit}
             isLoading={isLoading}
             activeTab={activeTab}
+            formError={formError}
           />
         </div>
 
